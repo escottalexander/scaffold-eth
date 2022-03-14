@@ -1,3 +1,5 @@
 .App {
   text-align: center;
+  aspect-ratio: 28 / 48;
+  overflow: hidden;
 }

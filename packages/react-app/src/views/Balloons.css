@@ -1,0 +1,205 @@
+@-webkit-keyframes wobble-1 {
+    0% {
+        -webkit-transform: translateX(0%);
+    }
+    20% {
+        -webkit-transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        -webkit-transform: translateX(0%);
+    }
+    80% {
+        -webkit-transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        -webkit-transform: translateX(0%);
+    }
+}
+
+@keyframes wobble-1 {
+    0% {
+        transform: translateX(0%);
+    }
+    20% {
+        transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        transform: translateX(0%);
+    }
+    80% {
+        transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.wobble-1 {
+    -webkit-animation-name: wobble-1;
+    animation-name: wobble-1;
+    transition: top 10s linear;
+    -webkit-animation-duration: 40s;
+    animation-duration: 40s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes wobble-2 {
+    0% {
+        -webkit-transform: translateX(0%);
+    }
+    5% {
+        -webkit-transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        -webkit-transform: translateX(0%);
+    }
+    95% {
+        -webkit-transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        -webkit-transform: translateX(0%);
+    }
+}
+
+@keyframes wobble-2 {
+    0% {
+        transform: translateX(0%);
+    }
+    5% {
+        transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        transform: translateX(0%);
+    }
+    95% {
+        transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.wobble-2 {
+    -webkit-animation-name: wobble-2;
+    animation-name: wobble-2;
+    transition: top 10s linear;
+    -webkit-animation-duration: 70s;
+    animation-duration: 70s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes wobble-3 {
+    0% {
+        -webkit-transform: translateX(0%);
+    }
+    15% {
+        -webkit-transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        -webkit-transform: translateX(0%);
+    }
+    85% {
+        -webkit-transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        -webkit-transform: translateX(0%);
+    }
+}
+
+@keyframes wobble-3 {
+    0% {
+        transform: translateX(0%);
+    }
+    15% {
+        transform: translateX(10%) rotate(4deg);
+    }
+    50% {
+        transform: translateX(0%);
+    }
+    85% {
+        transform: translateX(-10%) rotate(-4deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.wobble-3 {
+    -webkit-animation-name: wobble-3;
+    animation-name: wobble-3;
+    transition: top 10s linear;
+    -webkit-animation-duration: 30s;
+    animation-duration: 30s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes wobble-4 {
+    0% {
+        -webkit-transform: translateX(0%);
+    }
+    10% {
+        -webkit-transform: translateX(10%) rotate(4deg);
+    }
+    30% {
+        -webkit-transform: translateX(0%);
+    }
+    60% {
+        -webkit-transform: translateX(-10%) rotate(-4deg);
+    }
+    90% {
+        -webkit-transform: translateX(5%) rotate(4deg);
+    }
+    100% {
+        -webkit-transform: translateX(0%);
+    }
+}
+
+@keyframes wobble-4 {
+    0% {
+        transform: translateX(0%);
+    }
+    10% {
+        transform: translateX(10%) rotate(4deg);
+    }
+    30% {
+        transform: translateX(0%);
+    }
+    60% {
+        transform: translateX(-10%) rotate(-4deg);
+    }
+    90% {
+        transform: translateX(5%) rotate(4deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.wobble-4 {
+    -webkit-animation-name: wobble-4;
+    animation-name: wobble-4;
+    transition: top 10s linear;
+    -webkit-animation-duration: 60s;
+    animation-duration: 60s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+}
