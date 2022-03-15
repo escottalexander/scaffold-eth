@@ -8,8 +8,15 @@ export default function Balloons({
 }) {
     console.log(balloons);
     const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    const screenHeight = screenWidth * (48 / 28);
     console.log(screenWidth, screenHeight);
+    const currentDate = new Date().getTime();//1647230400000;
+    const endDate = 1647835200000;
+    const difference = endDate - currentDate;
+    // if the endDate - balloons timestamp == 0 it means the balloon is at the very top of the screen
+    // if the endDate - balloons timestamp == `difference` it means the balloon is at the very bottom of the screen
+    const heightRatio = (screenHeight * .85) / difference;
+
     const [balloonPositions, setBalloonPositions] = useState([]);
 
     const dispersedBalloons = balloons.map(balloon => {
@@ -23,8 +30,9 @@ export default function Balloons({
             return pos;
         }
         const xPos = numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 1);
+        const xVariance = numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 3);
         // Balloon X position is based on id so that it always appears in the same place
-        const balloonX = (screenWidth / 20) * xPos;
+        const balloonX = ((screenWidth / 20) * xPos) + (xVariance * 2);
 
         const oneThroughFour = (num) => {
             if (num <= 4) {
@@ -40,10 +48,10 @@ export default function Balloons({
 
         const wobbleEffectNum = oneThroughFour(numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 2));
 
-
+        const balloonY = (endDate - balloon.timestamp) * heightRatio;
 
         return (
-            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px" }}></img>
+            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
         )
     })
 
