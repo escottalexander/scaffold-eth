@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState } from "react";
 import "./Balloons.css";
-import { balloons } from "./balloons.json";
+import { balloons } from "./balloonsStubData.json";
 
 export default function Balloons({
     //balloons
@@ -11,8 +11,9 @@ export default function Balloons({
     const screenHeight = screenWidth * (48 / 28);
     console.log(screenWidth, screenHeight);
     const currentDate = new Date().getTime();//1647230400000;
+    const startDate = 1647230400000;
     const endDate = 1647835200000;
-    const difference = endDate - currentDate;
+    const difference = endDate - startDate;
     // if the endDate - balloons timestamp == 0 it means the balloon is at the very top of the screen
     // if the endDate - balloons timestamp == `difference` it means the balloon is at the very bottom of the screen
     const heightRatio = (screenHeight * .85) / difference;
@@ -35,6 +36,7 @@ export default function Balloons({
         const balloonX = ((screenWidth / 20) * xPos) + (xVariance * 2);
 
         const oneThroughFour = (num) => {
+            return 1;
             if (num <= 4) {
                 return num
             } else if (num > 4 && num <= 8) {
@@ -48,10 +50,10 @@ export default function Balloons({
 
         const wobbleEffectNum = oneThroughFour(numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 2));
 
-        const balloonY = (endDate - balloon.timestamp) * heightRatio;
+        const balloonY = (endDate - (balloon.timestamp)) * heightRatio;
 
         return (
-            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
+            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum + " bob-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
         )
     })
 
