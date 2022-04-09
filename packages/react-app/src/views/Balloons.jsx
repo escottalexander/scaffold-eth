@@ -36,7 +36,6 @@ export default function Balloons({
         const balloonX = ((screenWidth / 20) * xPos) + (xVariance * 2);
 
         const oneThroughFour = (num) => {
-            return 1;
             if (num <= 4) {
                 return num
             } else if (num > 4 && num <= 8) {
@@ -53,7 +52,7 @@ export default function Balloons({
         const balloonY = (endDate - (balloon.timestamp)) * heightRatio;
 
         return (
-            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum + " bob-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
+            <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
         )
     })
 
