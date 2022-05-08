@@ -221,8 +221,9 @@ function App(props) {
         } catch (e) {
           console.log(e);
         }
+        setYourCollectibles(collectibleUpdate.reverse());
+
       }
-      setYourCollectibles(collectibleUpdate.reverse());
     };
     updateYourCollectibles();
   }, [total]);

@@ -26,6 +26,7 @@ const main = async () => {
 
   for (let i = 0; i < 15; i++) {
     await yourCollectible.mintItem();
+    await sleep(1000);
     console.log(` 📡 ${i}`)
   }
 

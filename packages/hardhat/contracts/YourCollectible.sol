@@ -21,9 +21,7 @@ contract YourCollectible is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() public ERC721("BuidlGuidlBalloons", "BGB") {
-        // RELEASE THE LOOGIES!
-    }
+    constructor() public ERC721("BuidlGuidlBalloons", "BGB") {}
 
     struct Balloon {
         bytes3 color1;
@@ -32,6 +30,7 @@ contract YourCollectible is ERC721, Ownable {
         bytes3 color4;
         bytes3 color5;
         bytes3 color6;
+        uint256 launchDate;
     }
 
     mapping(uint256 => Balloon) public balloons;
@@ -77,7 +76,7 @@ contract YourCollectible is ERC721, Ownable {
             bytes2(predictableRandom[15]) |
             (bytes2(predictableRandom[16]) >> 8) |
             (bytes3(predictableRandom[17]) >> 16);
-
+        balloons[id].launchDate = block.timestamp;
         return id;
     }
 
@@ -89,20 +88,21 @@ contract YourCollectible is ERC721, Ownable {
         string memory description = string(
             abi.encodePacked(
                 "This balloon has the following colors: #",
-                // balloons[id].color1.toColor(),
-                // ", #",
-                // balloons[id].color2.toColor(),
-                // ", #",
-                // balloons[id].color3.toColor(),
-                // ", #",
-                // balloons[id].color4.toColor(),
-                // ", #",
-                // balloons[id].color5.toColor(),
-                // ", #",
-                // balloons[id].color6.toColor(),
+                balloons[id].color1.toColor(),
+                ", #",
+                balloons[id].color2.toColor(),
+                ", #",
+                balloons[id].color3.toColor(),
+                ", #",
+                balloons[id].color4.toColor(),
+                ", #",
+                balloons[id].color5.toColor(),
+                ", #",
+                balloons[id].color6.toColor(),
                 "."
             )
         );
+
         string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
         return
@@ -117,7 +117,7 @@ contract YourCollectible is ERC721, Ownable {
                                 '", "description":"',
                                 description,
                                 '", "launchDate":"',
-                                block.timestamp.toString(),
+                                balloons[id].launchDate.toString(),
                                 '", "external_url":"https://burnyboys.com/token/',
                                 id.toString(),
                                 '", "attributes": [',
@@ -176,13 +176,6 @@ contract YourCollectible is ERC721, Ownable {
             );
     }
 
-    //bytes3 color1 = color1[id];
-    //bytes3 color2 = 0xc5f9d0;
-    //bytes3 color3 = 0xffb93b;
-    //bytes3 color4 = 0xEB144C;
-    //bytes3 color5 = 0x057C22;
-    //bytes3 color6 = 0xffe5ab;
-
     bytes3 bottomColor1 = 0x056b68;
     bytes3 bottomColor2 = 0x083330;
 
@@ -226,31 +219,5 @@ contract YourCollectible is ERC721, Ownable {
         );
 
         return render;
-    }
-
-    function uint2str(uint256 _i)
-        internal
-        pure
-        returns (string memory _uintAsString)
-    {
-        if (_i == 0) {
-            return "0";
-        }
-        uint256 j = _i;
-        uint256 len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len;
-        while (_i != 0) {
-            k = k - 1;
-            uint8 temp = (48 + uint8(_i - (_i / 10) * 10));
-            bytes1 b1 = bytes1(temp);
-            bstr[k] = b1;
-            _i /= 10;
-        }
-        return string(bstr);
     }
 }

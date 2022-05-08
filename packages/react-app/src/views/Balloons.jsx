@@ -8,19 +8,22 @@ export default function Balloons({
 }) {
     console.log(balloons);
     const screenWidth = window.innerWidth;
-    const screenHeight = screenWidth * (48 / 28);
+    const screenHeight = screenWidth * (48 / 28); // background ratio
     console.log(screenWidth, screenHeight);
-    const currentDate = new Date().getTime();//1647230400000;
-    const startDate = 1647230400000;
-    const endDate = 1647835200000;
-    const difference = endDate - startDate;
-    // if the endDate - balloons launchDate == 0 it means the balloon is at the very top of the screen
-    // if the endDate - balloons launchDate == `difference` it means the balloon is at the very bottom of the screen
-    const heightRatio = (screenHeight * .85) / difference;
 
     const [balloonPositions, setBalloonPositions] = useState([]);
 
     const dispersedBalloons = balloons.map(balloon => {
+        const currentDate = new Date().getTime() / 1000;
+        const startDate = Number(balloon.launchDate);
+        const endDate = startDate + 1000//((604800000 / 7) / 4); // launchDate + 6 hours (remove / 28 to make one week)
+        const difference = endDate - startDate;
+        // if the endDate - balloons launchDate == 0 it means the balloon is at the very top of the screen
+        // if the endDate - balloons launchDate == `difference` it means the balloon is at the very bottom of the screen
+        const heightRatio = ((screenHeight) / difference);
+
+        console.log(currentDate, startDate, endDate, difference, heightRatio);
+
         const id = parseInt(balloon.id.hex, 16);
 
         // this is both deterministic (so that they don't hop around on reflow)
@@ -49,13 +52,15 @@ export default function Balloons({
 
         const wobbleEffectNum = oneThroughFour(numFromHash(balloon.attributes.find(a => a.trait_type === "color1").value, 2));
 
-        const balloonY = ((Number(balloon.launchDate) + 604800000) - (Number(balloon.launchDate))) * heightRatio;
+        const balloonY = (screenHeight - 400) - ((currentDate - startDate) * heightRatio);
+        // balloon doesn't show if the endDate has passed
+        if (balloonY <= -125) return;
 
         return (
             <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>
         )
-    })
-
+    });
+    console.log(dispersedBalloons);
     return (
         <div>
             {dispersedBalloons}
