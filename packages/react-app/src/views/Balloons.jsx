@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState } from "react";
 import "./Balloons.css";
-import { balloons } from "./balloonsStubData.json";
+//import { balloons } from "./balloonsStubData.json";
 
 export default function Balloons({
-    //balloons
+    balloons
 }) {
     console.log(balloons);
     const screenWidth = window.innerWidth;
@@ -14,8 +14,8 @@ export default function Balloons({
     const startDate = 1647230400000;
     const endDate = 1647835200000;
     const difference = endDate - startDate;
-    // if the endDate - balloons timestamp == 0 it means the balloon is at the very top of the screen
-    // if the endDate - balloons timestamp == `difference` it means the balloon is at the very bottom of the screen
+    // if the endDate - balloons launchDate == 0 it means the balloon is at the very top of the screen
+    // if the endDate - balloons launchDate == `difference` it means the balloon is at the very bottom of the screen
     const heightRatio = (screenHeight * .85) / difference;
 
     const [balloonPositions, setBalloonPositions] = useState([]);
@@ -30,8 +30,8 @@ export default function Balloons({
             const pos = parseInt(hash[place], 16) + 1;
             return pos;
         }
-        const xPos = numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 1);
-        const xVariance = numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 3);
+        const xPos = numFromHash(balloon.attributes.find(a => a.trait_type === "color1").value, 1);
+        const xVariance = numFromHash(balloon.attributes.find(a => a.trait_type === "color1").value, 3);
         // Balloon X position is based on id so that it always appears in the same place
         const balloonX = ((screenWidth / 20) * xPos) + (xVariance * 2);
 
@@ -47,9 +47,9 @@ export default function Balloons({
             }
         }
 
-        const wobbleEffectNum = oneThroughFour(numFromHash(balloon.attributes.find(a => a.trait_type === "color").value, 2));
+        const wobbleEffectNum = oneThroughFour(numFromHash(balloon.attributes.find(a => a.trait_type === "color1").value, 2));
 
-        const balloonY = (endDate - (balloon.timestamp)) * heightRatio;
+        const balloonY = ((Number(balloon.launchDate) + 604800000) - (Number(balloon.launchDate))) * heightRatio;
 
         return (
             <img key={id + "-" + balloon.name} src={balloon.image} className={"wobble-" + wobbleEffectNum} width="100" style={{ position: "absolute", left: balloonX + "px", top: balloonY + "px" }}></img>

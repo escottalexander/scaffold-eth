@@ -191,18 +191,17 @@ function App(props) {
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
   const yourBalance = balance && balance.toNumber && balance.toNumber();
+  const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
   const [yourCollectibles, setYourCollectibles] = useState();
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
       const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+      for (let tokenIndex = 0; tokenIndex < total; tokenIndex++) {
         try {
-          console.log("GEtting token index", tokenIndex);
-          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
-          console.log("tokenId", tokenId);
-          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
-          const jsonManifestString = atob(tokenURI.substring(29))
+
+          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenIndex);
+          const jsonManifestString = atob(tokenURI.substring(29));
           console.log("jsonManifestString", jsonManifestString);
           /*
                     const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
@@ -214,7 +213,7 @@ function App(props) {
           try {
             const jsonManifest = JSON.parse(jsonManifestString);
             console.log("jsonManifest", jsonManifest);
-            collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+            collectibleUpdate.push({ id: tokenIndex, uri: tokenURI, owner: address, ...jsonManifest });
           } catch (e) {
             console.log(e);
           }
@@ -226,7 +225,7 @@ function App(props) {
       setYourCollectibles(collectibleUpdate.reverse());
     };
     updateYourCollectibles();
-  }, [address, yourBalance]);
+  }, [total]);
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -504,9 +503,9 @@ function App(props) {
               🍴 <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">Fork this repo</a> and build a cool SVG NFT!
 
             </div>
-            {/*yourCollectibles && yourCollectibles.length > 0*/true ?
+            {yourCollectibles && yourCollectibles.length > 0 ?
               <Balloons
-              //balloons={yourCollectibles}
+                balloons={yourCollectibles}
               ></Balloons> : ""
             }
 
