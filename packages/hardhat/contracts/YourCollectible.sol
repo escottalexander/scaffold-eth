@@ -15,8 +15,8 @@ import "./ToColor.sol";
 // GET LISTED ON OPENSEA: https://testnets.opensea.io/get-listed/step-two
 
 contract YourCollectible is ERC721, Ownable {
-    using Strings for uint256;
-    using HexStrings for uint160;
+    //using Strings for uint256;
+    using HexStrings for uint;
     using ToColor for bytes3;
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -131,12 +131,14 @@ contract YourCollectible is ERC721, Ownable {
                                 description,
                                 '", "launchDate":"',
                                 balloons[id].launchDate.toString(),
+                                '", "seed":"',
+                                (uint(balloons[id].seed)).toHexString(20),
                                 '", "external_url":"https://burnyboys.com/token/',
                                 id.toString(),
                                 '", "attributes": [',
                                 _generateAttributes(id),
                                 '], "owner":"',
-                                (uint160(ownerOf(id))).toHexString(20),
+                                (uint(ownerOf(id))).toHexString(20),
                                 '", "image": "',
                                 "data:image/svg+xml;base64,",
                                 image,
