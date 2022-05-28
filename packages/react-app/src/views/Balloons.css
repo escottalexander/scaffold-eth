@@ -1,3 +1,7 @@
+.balloon {
+    transition: top 120s linear;
+}
+
 @-webkit-keyframes wobble-1 {
     0% {
         -webkit-transform: translateX(3%) rotate(-3deg);
@@ -73,7 +77,6 @@
 .wobble-1 {
     -webkit-animation-name: wobble-1;
     animation-name: wobble-1;
-    transition: top 0.5s linear;
     animation-timing-function: ease-in-out;
     -webkit-animation-duration: 30s;
     animation-duration: 30s;
@@ -160,7 +163,6 @@
 .wobble-2 {
     -webkit-animation-name: wobble-2;
     animation-name: wobble-2;
-    transition: top 0.5s linear;
     animation-timing-function: ease-in-out;
     -webkit-animation-duration: 30s;
     animation-duration: 30s;
@@ -253,7 +255,6 @@
 .wobble-3 {
     -webkit-animation-name: wobble-3;
     animation-name: wobble-3;
-    transition: top 0.5s linear;
     animation-timing-function: ease-in-out;
     -webkit-animation-duration: 30s;
     animation-duration: 30s;
@@ -346,7 +347,6 @@
 .wobble-4 {
     -webkit-animation-name: wobble-4;
     animation-name: wobble-4;
-    transition: top 0.5s linear;
     animation-timing-function: ease-in-out;
     -webkit-animation-duration: 30s;
     animation-duration: 30s;

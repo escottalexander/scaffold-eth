@@ -190,30 +190,20 @@ function App(props) {
   //
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
-  const yourBalance = balance && balance.toNumber && balance.toNumber();
   const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
-  const [yourCollectibles, setYourCollectibles] = useState();
+
+  const [yourCollectibles, setYourCollectibles] = useState([]);
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
-      const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < total; tokenIndex++) {
+      // for (let tokenIndex = yourCollectibles.length; tokenIndex < total; tokenIndex++) {
         try {
-
-          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenIndex);
+          let tokenId = parseInt(transferEvents.reverse().find(token => token.to === address).tokenId._hex,16);
+          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
           const jsonManifestString = atob(tokenURI.substring(29));
-          console.log("jsonManifestString", jsonManifestString);
-          /*
-                    const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
-                    console.log("ipfsHash", ipfsHash);
-          
-                    const jsonManifestBuffer = await getFromIPFS(ipfsHash);
-          
-                  */
           try {
             const jsonManifest = JSON.parse(jsonManifestString);
-            console.log("jsonManifest", jsonManifest);
-            collectibleUpdate.push({ id: tokenIndex, uri: tokenURI, owner: address, ...jsonManifest });
+            setYourCollectibles(yourCollectibles.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }));
           } catch (e) {
             console.log(e);
           }
@@ -221,13 +211,12 @@ function App(props) {
         } catch (e) {
           console.log(e);
         }
-        setYourCollectibles(collectibleUpdate.reverse());
+        
 
-      }
+      // }
     };
-    updateYourCollectibles();
-  }, [total]);
-
+      updateYourCollectibles();
+  }, [balance]);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
