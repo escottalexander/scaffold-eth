@@ -146,34 +146,9 @@
     "name": "balloons",
     "outputs": [
       {
-        "internalType": "bytes3",
-        "name": "color1",
-        "type": "bytes3"
-      },
-      {
-        "internalType": "bytes3",
-        "name": "color2",
-        "type": "bytes3"
-      },
-      {
-        "internalType": "bytes3",
-        "name": "color3",
-        "type": "bytes3"
-      },
-      {
-        "internalType": "bytes3",
-        "name": "color4",
-        "type": "bytes3"
-      },
-      {
-        "internalType": "bytes3",
-        "name": "color5",
-        "type": "bytes3"
-      },
-      {
-        "internalType": "bytes3",
-        "name": "color6",
-        "type": "bytes3"
+        "internalType": "bytes32",
+        "name": "seed",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",

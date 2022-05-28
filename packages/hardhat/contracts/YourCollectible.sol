@@ -24,12 +24,7 @@ contract YourCollectible is ERC721, Ownable {
     constructor() public ERC721("BuidlGuidlBalloons", "BGB") {}
 
     struct Balloon {
-        bytes3 color1;
-        bytes3 color2;
-        bytes3 color3;
-        bytes3 color4;
-        bytes3 color5;
-        bytes3 color6;
+        bytes32 seed;
         uint256 launchDate;
     }
 
@@ -52,32 +47,50 @@ contract YourCollectible is ERC721, Ownable {
                 id
             )
         );
-        balloons[id].color1 =
-            bytes2(predictableRandom[0]) |
-            (bytes2(predictableRandom[1]) >> 8) |
-            (bytes3(predictableRandom[2]) >> 16);
-        balloons[id].color2 =
-            bytes2(predictableRandom[3]) |
-            (bytes2(predictableRandom[4]) >> 8) |
-            (bytes3(predictableRandom[5]) >> 16);
-        balloons[id].color3 =
-            bytes2(predictableRandom[6]) |
-            (bytes2(predictableRandom[7]) >> 8) |
-            (bytes3(predictableRandom[8]) >> 16);
-        balloons[id].color4 =
-            bytes2(predictableRandom[9]) |
-            (bytes2(predictableRandom[10]) >> 8) |
-            (bytes3(predictableRandom[11]) >> 16);
-        balloons[id].color5 =
-            bytes2(predictableRandom[12]) |
-            (bytes2(predictableRandom[13]) >> 8) |
-            (bytes3(predictableRandom[14]) >> 16);
-        balloons[id].color6 =
-            bytes2(predictableRandom[15]) |
-            (bytes2(predictableRandom[16]) >> 8) |
-            (bytes3(predictableRandom[17]) >> 16);
+        balloons[id].seed = predictableRandom;
         balloons[id].launchDate = block.timestamp;
         return id;
+    }
+
+    function getColor(uint256 tokenId, uint8 colorId)
+        internal
+        view
+        returns (string memory)
+    {
+        require(colorId > 0 && colorId <= 6, "INVALID COLOR ID");
+        bytes3 color;
+        if (colorId == 1) {
+            color =
+                bytes2(balloons[tokenId].seed[0]) |
+                (bytes2(balloons[tokenId].seed[1]) >> 8) |
+                (bytes3(balloons[tokenId].seed[2]) >> 16);
+        } else if (colorId == 2) {
+            color =
+                bytes2(balloons[tokenId].seed[3]) |
+                (bytes2(balloons[tokenId].seed[4]) >> 8) |
+                (bytes3(balloons[tokenId].seed[5]) >> 16);
+        } else if (colorId == 3) {
+            color =
+                bytes2(balloons[tokenId].seed[6]) |
+                (bytes2(balloons[tokenId].seed[7]) >> 8) |
+                (bytes3(balloons[tokenId].seed[8]) >> 16);
+        } else if (colorId == 4) {
+            color =
+                bytes2(balloons[tokenId].seed[9]) |
+                (bytes2(balloons[tokenId].seed[10]) >> 8) |
+                (bytes3(balloons[tokenId].seed[11]) >> 16);
+        } else if (colorId == 5) {
+            color =
+                bytes2(balloons[tokenId].seed[12]) |
+                (bytes2(balloons[tokenId].seed[13]) >> 8) |
+                (bytes3(balloons[tokenId].seed[14]) >> 16);
+        } else if (colorId == 6) {
+            color =
+                bytes2(balloons[tokenId].seed[15]) |
+                (bytes2(balloons[tokenId].seed[16]) >> 8) |
+                (bytes3(balloons[tokenId].seed[17]) >> 16);
+        }
+        return color.toColor();
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
@@ -88,17 +101,17 @@ contract YourCollectible is ERC721, Ownable {
         string memory description = string(
             abi.encodePacked(
                 "This balloon has the following colors: #",
-                balloons[id].color1.toColor(),
+                getColor(id, 1),
                 ", #",
-                balloons[id].color2.toColor(),
+                getColor(id, 2),
                 ", #",
-                balloons[id].color3.toColor(),
+                getColor(id, 3),
                 ", #",
-                balloons[id].color4.toColor(),
+                getColor(id, 4),
                 ", #",
-                balloons[id].color5.toColor(),
+                getColor(id, 5),
                 ", #",
-                balloons[id].color6.toColor(),
+                getColor(id, 6),
                 "."
             )
         );
@@ -160,17 +173,17 @@ contract YourCollectible is ERC721, Ownable {
             string(
                 abi.encodePacked(
                     '{"trait_type": "color1", "value": "#',
-                    balloons[id].color1.toColor(),
+                    getColor(id, 1),
                     '"},{"trait_type": "color2", "value": "#',
-                    balloons[id].color2.toColor(),
+                    getColor(id, 2),
                     '"},{"trait_type": "color3", "value": "#',
-                    balloons[id].color3.toColor(),
+                    getColor(id, 3),
                     '"},{"trait_type": "color4", "value": "#',
-                    balloons[id].color4.toColor(),
+                    getColor(id, 4),
                     '"},{"trait_type": "color5", "value": "#',
-                    balloons[id].color5.toColor(),
+                    getColor(id, 5),
                     '"},{"trait_type": "color6", "value": "#',
-                    balloons[id].color6.toColor(),
+                    getColor(id, 6),
                     '"}'
                 )
             );
@@ -189,19 +202,19 @@ contract YourCollectible is ERC721, Ownable {
         string memory render = string(
             abi.encodePacked(
                 "<defs><style>.cls-1{isolation:isolate;}.cls-2{fill:#",
-                balloons[id].color2.toColor(),
+                getColor(id, 2),
                 ";}.cls-3{fill:url(#linear-gradient);}.cls-4{fill:url(#linear-gradient-2);}.cls-5{fill:#",
                 basketCage.toColor(),
                 ";}.cls-6{fill:#",
-                balloons[id].color3.toColor(),
+                getColor(id, 3),
                 ";}.cls-7{fill:#",
-                balloons[id].color4.toColor(),
+                getColor(id, 4),
                 ";}.cls-8{fill:#",
-                balloons[id].color5.toColor(),
+                getColor(id, 5),
                 ";}.cls-9{fill:#",
-                balloons[id].color1.toColor(),
+                getColor(id, 1),
                 ";}.cls-10{fill:#",
-                balloons[id].color6.toColor(),
+                getColor(id, 6),
                 ';}.cls-11,.cls-12,.cls-13,.cls-14,.cls-15,.cls-16,.cls-17{mix-blend-mode:overlay;opacity:0.22;}.cls-11{fill:url(#linear-gradient-3);}.cls-12{fill:url(#linear-gradient-4);}.cls-13{fill:url(#linear-gradient-5);}.cls-14{fill:url(#linear-gradient-6);}.cls-15{fill:url(#linear-gradient-7);}.cls-16{fill:url(#linear-gradient-8);}.cls-17{fill:url(#linear-gradient-9);}.cls-18{fill:url(#linear-gradient-10);}</style><linearGradient id="linear-gradient" x1="255.35" y1="633.88" x2="315.1" y2="633.88" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#',
                 basket1.toColor(),
                 '"/><stop offset="1" stop-color="#',
