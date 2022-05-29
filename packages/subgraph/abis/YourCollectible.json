@@ -235,7 +235,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "timeStamp",
+        "type": "uint256"
+      }
+    ],
     "name": "mintItem",
     "outputs": [
       {

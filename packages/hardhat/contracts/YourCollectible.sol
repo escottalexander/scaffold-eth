@@ -32,8 +32,7 @@ contract YourCollectible is ERC721, Ownable {
 
     uint256 mintDeadline = block.timestamp + 24 hours;
 
-    function mintItem() public returns (uint256) {
-        require(block.timestamp < mintDeadline, "DONE MINTING");
+    function mintItem(uint timeStamp) public returns (uint256) {
         _tokenIds.increment();
 
         uint256 id = _tokenIds.current();
@@ -48,7 +47,7 @@ contract YourCollectible is ERC721, Ownable {
             )
         );
         balloons[id].seed = predictableRandom;
-        balloons[id].launchDate = block.timestamp;
+        balloons[id].launchDate = timeStamp;
         return id;
     }
 
@@ -57,7 +56,6 @@ contract YourCollectible is ERC721, Ownable {
         view
         returns (string memory)
     {
-        require(colorId > 0 && colorId <= 6, "INVALID COLOR ID");
         bytes3 color;
         if (colorId == 1) {
             color =

@@ -6,7 +6,7 @@ import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import { utils } from "ethers";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import ReactJson from "react-json-view";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import StackGrid from "react-stack-grid";
@@ -28,11 +28,12 @@ import {
   useOnBlock,
   useUserProvider,
 } from "./hooks";
-import { BlockPicker } from 'react-color'
-
+import { BlockPicker } from "react-color";
+import ReactCanvasConfetti from "react-canvas-confetti";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
+
 const ipfsAPI = require("ipfs-http-client");
 
 const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
@@ -117,6 +118,59 @@ const web3Modal = new Web3Modal({
 });
 
 function App(props) {
+// confetti setup
+  const canvasStyles = {
+    position: "fixed",
+    pointerEvents: "none",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0
+  };
+  const refAnimationInstance = useRef(null);
+  
+    const getInstance = useCallback((instance) => {
+      refAnimationInstance.current = instance;
+    }, []);
+  
+    const makeShot = useCallback((particleRatio, opts) => {
+      refAnimationInstance.current &&
+        refAnimationInstance.current({
+          ...opts,
+          origin: { y: 0.8 },
+          particleCount: Math.floor(200 * particleRatio)
+        });
+    }, []);
+  
+    const showConfetti = useCallback(() => {
+      makeShot(0.25, {
+        spread: 26,
+        startVelocity: 55
+      });
+  
+      makeShot(0.2, {
+        spread: 60
+      });
+  
+      makeShot(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+      });
+  
+      makeShot(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+      });
+  
+      makeShot(0.1, {
+        spread: 120,
+        startVelocity: 45
+      });
+    }, [makeShot]);
+    // end confetti setup
   const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
 
   const logoutOfWeb3Modal = async () => {
@@ -193,30 +247,59 @@ function App(props) {
   const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
 
   const [yourCollectibles, setYourCollectibles] = useState([]);
+  const [userMintedTokenId, setUserMintedTokenId] = useState();
+  const [launchTimer, setLaunchTimer] = useState(0);
+
+  const mintItem = async () => {
+    const timeStamp = new Date().getTime();
+    await tx(writeContracts.YourCollectible.mintItem(timeStamp))
+    const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, balance);
+    console.log("💰 minted token:", tokenId);
+    setUserMintedTokenId(tokenId);
+    // scroll to bottom of page
+    window.scrollTo({
+      top: 10000,
+      behavior: 'smooth',
+    });
+    // show confetti
+    setTimeout(() => {
+      showConfetti();
+    }, 2750);
+    // start launch timer
+    const timer = setInterval(() => {
+      if (launchTimer > 3) {
+        clearInterval(timer);
+        setLaunchTimer(0);
+      } else {
+        setLaunchTimer(launchTimer + 1);
+      }
+    }, 2000);
+    
+  };
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
-      // for (let tokenIndex = yourCollectibles.length; tokenIndex < total; tokenIndex++) {
+      if (userMintedTokenId) {
         try {
-          let tokenId = parseInt(transferEvents.reverse().find(token => token.to === address).tokenId._hex,16);
+          let tokenId = userMintedTokenId.toNumber();
+          console.log("💰 tokenId:", tokenId);
           const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
           const jsonManifestString = atob(tokenURI.substring(29));
           try {
             const jsonManifest = JSON.parse(jsonManifestString);
-            setYourCollectibles(yourCollectibles.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }));
+            setYourCollectibles(
+              yourCollectibles.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }),
+            );
           } catch (e) {
             console.log(e);
           }
-
         } catch (e) {
           console.log(e);
         }
-        
-
-      // }
+      }
     };
-      updateYourCollectibles();
-  }, [balance]);
+    updateYourCollectibles();
+  }, [userMintedTokenId, launchTimer]);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -246,15 +329,7 @@ function App(props) {
       console.log("📝 readContracts", readContracts);
       console.log("🔐 writeContracts", writeContracts);
     }
-  }, [
-    mainnetProvider,
-    address,
-    selectedChainId,
-    yourLocalBalance,
-    yourMainnetBalance,
-    readContracts,
-    writeContracts,
-  ]);
+  }, [mainnetProvider, address, selectedChainId, yourLocalBalance, yourMainnetBalance, readContracts, writeContracts]);
 
   let networkDisplay = "";
   if (localChainId && selectedChainId && localChainId !== selectedChainId) {
@@ -421,13 +496,19 @@ function App(props) {
 
             <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               {isSigner ? (
-                <Button type={"primary"} onClick={() => {
-                  tx(writeContracts.YourCollectible.mintItem())
-                }}>MINT</Button>
+                <Button
+                  type={"primary"}
+                  onClick={() => {
+                    mintItem();
+                  }}
+                >
+                  MINT
+                </Button>
               ) : (
-                <Button type={"primary"} onClick={loadWeb3Modal}>CONNECT WALLET</Button>
+                <Button type={"primary"} onClick={loadWeb3Modal}>
+                  CONNECT WALLET
+                </Button>
               )}
-
             </div>
 
             {/* <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
@@ -487,23 +568,23 @@ function App(props) {
               />
             </div> */}
             <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 256 }}>
-
-              🛠 built with <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">🏗 scaffold-eth</a>
-
-              🍴 <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">Fork this repo</a> and build a cool SVG NFT!
-
+              🛠 built with{" "}
+              <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">
+                🏗 scaffold-eth
+              </a>
+              🍴{" "}
+              <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">
+                Fork this repo
+              </a>{" "}
+              and build a cool SVG NFT!
             </div>
-            {yourCollectibles && yourCollectibles.length > 0 ?
-              <Balloons
-                balloons={yourCollectibles}
-              ></Balloons> : ""
-            }
-
+            {yourCollectibles && yourCollectibles.length > 0 ? <Balloons balloons={yourCollectibles}></Balloons> : ""}
           </Route>
           <Route path="/debug">
-
             <div style={{ padding: 32 }}>
-              <Address value={readContracts && readContracts.YourCollectible && readContracts.YourCollectible.address} />
+              <Address
+                value={readContracts && readContracts.YourCollectible && readContracts.YourCollectible.address}
+              />
             </div>
 
             <Contract
@@ -575,6 +656,7 @@ function App(props) {
           </Col>
         </Row>
       </div>
+      <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
     </div>
   );
 }

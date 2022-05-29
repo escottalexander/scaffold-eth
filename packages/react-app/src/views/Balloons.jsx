@@ -35,11 +35,13 @@ export default function Balloons({ balloons }) {
     const balloonY = (screenHeight / 60) * yPos + variance * 2;
 
     const wobbleEffectNum = balloon.seed.slice(2)[3];
-    // define the condition for the ballon to be considered "launched"
+    // define the condition for the balloon to be considered "launched"
     const hasLaunched = () => {
-      const currentDate = new Date().getTime() / 1000;
+      const currentDate = new Date().getTime();
       const launchDate = Number(balloon.launchDate);
-      return !(currentDate - launchDate < 120);
+      console.log(currentDate, launchDate, currentDate - launchDate);
+      console.log("has launched?", !(currentDate - launchDate < 8000))
+      return !(currentDate - launchDate < 8000);
     } 
     return (
       <img
@@ -47,7 +49,7 @@ export default function Balloons({ balloons }) {
         src={balloon.image}
         className={"balloon" + (hasLaunched() ? " wobble-" + wobbleEffectNum : "") }
         width="100"
-        style={{ position: "absolute", left: balloonX + "px", top: ( hasLaunched() ? (screenHeight - 300) + "px" : balloonY + "px") }}
+        style={{ position: "absolute", left: ( hasLaunched() ? (balloonX - 50) + "px" : ((screenWidth / 2) - 50) + "px"), top: ( hasLaunched() ? balloonY + "px" : (screenHeight - 300) + "px") }}
       />
     );
   });

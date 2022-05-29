@@ -24,11 +24,11 @@ const main = async () => {
   // deploy the contract with all the artworks forSale
   const yourCollectible = await deploy("YourCollectible"/*,[ bytes32Array ]*/) // <-- add in constructor args like line 19 vvvv
 
-  for (let i = 0; i < 15; i++) {
-    await yourCollectible.mintItem();
-    await sleep(1000);
-    console.log(` 📡 ${i}`)
-  }
+  // for (let i = 0; i < 15; i++) {
+  //   await yourCollectible.mintItem();
+  //   await sleep(1000);
+  //   console.log(` 📡 ${i}`)
+  // }
 
   yourCollectible.transferOwnership("0x1c80D2A677c4a7756cf7D00fbb1c1766321333c3") //austingriffith.eth
 
