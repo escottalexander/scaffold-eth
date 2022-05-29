@@ -118,7 +118,7 @@ const web3Modal = new Web3Modal({
 });
 
 function App(props) {
-// confetti setup
+  // confetti setup
   const canvasStyles = {
     position: "fixed",
     pointerEvents: "none",
@@ -129,49 +129,49 @@ function App(props) {
     zIndex: -1,
   };
   const refAnimationInstance = useRef(null);
-  
-    const getInstance = useCallback((instance) => {
-      refAnimationInstance.current = instance;
-    }, []);
-  
-    const makeShot = useCallback((particleRatio, opts) => {
-      refAnimationInstance.current &&
-        refAnimationInstance.current({
-          ...opts,
-          origin: { y: 0.8 },
-          particleCount: Math.floor(200 * particleRatio)
-        });
-    }, []);
-  
-    const showConfetti = useCallback(() => {
-      makeShot(0.25, {
-        spread: 26,
-        startVelocity: 55
+
+  const getInstance = useCallback(instance => {
+    refAnimationInstance.current = instance;
+  }, []);
+
+  const makeShot = useCallback((particleRatio, opts) => {
+    refAnimationInstance.current &&
+      refAnimationInstance.current({
+        ...opts,
+        origin: { y: 0.8 },
+        particleCount: Math.floor(200 * particleRatio),
       });
-  
-      makeShot(0.2, {
-        spread: 60
-      });
-  
-      makeShot(0.35, {
-        spread: 100,
-        decay: 0.91,
-        scalar: 0.8
-      });
-  
-      makeShot(0.1, {
-        spread: 120,
-        startVelocity: 25,
-        decay: 0.92,
-        scalar: 1.2
-      });
-  
-      makeShot(0.1, {
-        spread: 120,
-        startVelocity: 45
-      });
-    }, [makeShot]);
-    // end confetti setup
+  }, []);
+
+  const showConfetti = useCallback(() => {
+    makeShot(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+
+    makeShot(0.2, {
+      spread: 60,
+    });
+
+    makeShot(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+    });
+
+    makeShot(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2,
+    });
+
+    makeShot(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
+  }, [makeShot]);
+  // end confetti setup
   const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
 
   const logoutOfWeb3Modal = async () => {
@@ -253,14 +253,14 @@ function App(props) {
 
   const mintItem = async () => {
     const timeStamp = new Date().getTime();
-    await tx(writeContracts.YourCollectible.mintItem(timeStamp))
+    await tx(writeContracts.YourCollectible.mintItem(timeStamp));
     const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, balance);
     console.log("💰 minted token:", tokenId);
     setUserMintedTokenId(tokenId);
     // scroll to bottom of page
     window.scrollTo({
       top: 10000,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
     // show confetti
     setTimeout(() => {
@@ -275,7 +275,6 @@ function App(props) {
         setLaunchTimer(launchTimer + 1);
       }
     }, 2000);
-    
   };
 
   useEffect(() => {
