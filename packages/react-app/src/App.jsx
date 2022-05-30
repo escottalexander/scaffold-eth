@@ -253,28 +253,36 @@ function App(props) {
 
   const mintItem = async () => {
     const timeStamp = new Date().getTime();
-    await tx(writeContracts.YourCollectible.mintItem(timeStamp));
-    const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, balance);
-    console.log("💰 minted token:", tokenId);
-    setUserMintedTokenId(tokenId);
-    // scroll to bottom of page
-    window.scrollTo({
-      top: 10000,
-      behavior: "smooth",
-    });
-    // show confetti
-    setTimeout(() => {
-      showConfetti();
-    }, 2750);
-    // start launch timer
-    const timer = setInterval(() => {
-      if (launchTimer > 3) {
-        clearInterval(timer);
-        setLaunchTimer(0);
-      } else {
-        setLaunchTimer(launchTimer + 1);
+    await tx(writeContracts.YourCollectible.mintItem(timeStamp), update => {
+      console.log("📡 Transaction Update:", update);
+      if (update && (update.status === "confirmed" || update.status === 1)) {
+        console.log(" 🍾 Transaction " + update.hash + " finished!");
+        console.log(
+          " ⛽️ " +
+            update.gasUsed +
+            "/" +
+            (update.gasLimit || update.gas) +
+            " @ " +
+            parseFloat(update.gasPrice) / 1000000000 +
+            " gwei",
+        );
+        setTimeout(async () => {
+          const userBalance = await readContracts.YourCollectible.balanceOf(address);
+          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, userBalance - 1);
+          console.log("💰 minted token:", tokenId);
+          setUserMintedTokenId(tokenId);
+          // scroll to bottom of page
+          window.scrollTo({
+            top: 10000,
+            behavior: "smooth",
+          });
+          // show confetti
+          setTimeout(() => {
+            showConfetti();
+          }, 500);
+        }, 1500);
       }
-    }, 2000);
+    });
   };
 
   useEffect(() => {
@@ -299,7 +307,7 @@ function App(props) {
       }
     };
     updateYourCollectibles();
-  }, [userMintedTokenId, launchTimer]);
+  }, [userMintedTokenId]);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)

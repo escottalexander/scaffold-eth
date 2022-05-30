@@ -30,7 +30,7 @@ const main = async () => {
   //   console.log(` 📡 ${i}`)
   // }
 
-  yourCollectible.transferOwnership("0x1c80D2A677c4a7756cf7D00fbb1c1766321333c3") //austingriffith.eth
+  yourCollectible.transferOwnership("0x7F17aF79AABC4A297A58D389ab5905fEd4Ec9502") //austingriffith.eth
 
 
   //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
