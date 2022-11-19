@@ -1,0 +1,138 @@
+<svg width="1000" height="1000" style="background: #00000000;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="star" r="65%" spreadMethod="pad">
+            <stop offset="0%" stop-color="hsl(48,65%,95%)" stop-opacity="1" />
+            <stop offset="60%" stop-color="hsl(48,50%,65%)" stop-opacity="1" />
+            <stop offset="80%" stop-color="#000000" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="0" r="100%">
+            <stop offset="5%" stop-color="hsl(268, 90%, 50%)" />
+            <stop offset="35%" stop-color="hsl(58, 90%, 10%)" />
+            <stop offset="55%" stop-color="hsl(12, 90%, 60%)" />
+            <stop offset="95%" stop-color="hsl(118, 90%, 10%)" />
+        </radialGradient>
+        <filter id="smear0">
+            <feTurbulence baseFrequency="4.08" numOctaves="10" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="29" xChannelSelector="R" yChannelSelector="G"
+                result="displacement" />
+            <feGaussianBlur in="displacement" stdDeviation="0" />
+            <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+        <radialGradient id="1" r="40%">
+            <stop offset="50%" stop-color="hsl(166, 90%, 30%)" />
+            <stop offset="90%" stop-color="hsl(111, 90%, 60%)" />
+            <stop offset="97%" stop-color="hsl(138, 70%, 75%)" />
+            <stop offset="100%" stop-color="hsl(210, 90%, 30%)" />
+        </radialGradient>
+        <filter id="smear1">
+            <feTurbulence baseFrequency="0.08" numOctaves="10" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="11" xChannelSelector="R" yChannelSelector="G"
+                result="displacement" />
+            <feGaussianBlur in="displacement" stdDeviation="1" />
+            <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+        <radialGradient id="2" r="40%">
+            <stop offset="50%" stop-color="hsl(333, 90%, 30%)" />
+            <stop offset="90%" stop-color="hsl(20, 90%, 60%)" />
+            <stop offset="97%" stop-color="hsl(262, 70%, 75%)" />
+            <stop offset="100%" stop-color="hsl(315, 90%, 30%)" />
+        </radialGradient>
+        <filter id="smear2">
+            <feTurbulence baseFrequency="0.08" numOctaves="10" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="9" xChannelSelector="R" yChannelSelector="G"
+                result="displacement" />
+            <feGaussianBlur in="displacement" stdDeviation="1" />
+            <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+        <radialGradient id="3" r="40%">
+            <stop offset="50%" stop-color="hsl(1, 90%, 30%)" />
+            <stop offset="90%" stop-color="hsl(170, 90%, 60%)" />
+            <stop offset="97%" stop-color="hsl(271, 70%, 75%)" />
+            <stop offset="100%" stop-color="hsl(0, 90%, 30%)" />
+        </radialGradient>
+        <filter id="smear3">
+            <feTurbulence baseFrequency="0.08" numOctaves="10" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="13" xChannelSelector="R" yChannelSelector="G"
+                result="displacement" />
+            <feGaussianBlur in="displacement" stdDeviation="1" />
+            <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+        <radialGradient id="4" r="100%">
+            <stop offset="5%" stop-color="hsl(120, 90%, 50%)" />
+            <stop offset="35%" stop-color="hsl(94, 90%, 10%)" />
+            <stop offset="55%" stop-color="hsl(204, 90%, 60%)" />
+            <stop offset="95%" stop-color="hsl(211, 90%, 10%)" />
+        </radialGradient>
+        <filter id="smear4">
+            <feTurbulence baseFrequency="4.08" numOctaves="10" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="37" xChannelSelector="R" yChannelSelector="G"
+                result="displacement" />
+            <feGaussianBlur in="displacement" stdDeviation="0" />
+            <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+        <linearGradient id="shadow" x1="100%" y1="0%" x2="0%" y2="0%" spreadMethod="pad">
+            <stop offset="30%" stop-color="#000000" stop-opacity="1" />
+            <stop offset="40%" stop-color="#000000" stop-opacity=".9" />
+            <stop offset="60%" stop-color="#000000" stop-opacity="0" />
+        </linearGradient>
+    </defs>
+    <circle id="star" cx="500" cy="500" r="67" style="fill:url(#star);" />
+    <g id="planet-1">
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 500 500" to="360 500 500"
+            begin="0s" dur="12s" repeatCount="indefinite" additive="sum" />
+        <circle cx="625" cy="500" r="19" fill="hsl(232, 90%, 40%)"></circle>
+        <circle cx="625" cy="500" r="19" style="fill:url(#0);" filter="url(#smear0)">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 625 500"
+                to="360 625 500" begin="0s" dur="1735ms" repeatCount="indefinite" additive="sum" />
+        </circle>
+        <circle cx="625" cy="500" r="21" style="fill:url(#shadow);" transform="rotate(0, 625, 500)"></circle>
+    </g>
+    <g id="planet-2">
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 500 500" to="360 500 500"
+            begin="0s" dur="21s" repeatCount="indefinite" additive="sum" />
+        <circle cx="306" cy="406" r="32" fill="hsl(5, 90%, 40%)"></circle>
+        <circle cx="306" cy="406" r="32" style="fill:url(#1);" filter="url(#smear1)">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 306 406"
+                to="360 306 406" begin="0s" dur="2580ms" repeatCount="indefinite" additive="sum" />
+        </circle>
+        <circle cx="306" cy="406" r="34" style="fill:url(#shadow);" transform="rotate(205, 306, 406)"></circle>
+    </g>
+    <g id="planet-3">
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 500 500" to="360 500 500"
+            begin="0s" dur="31s" repeatCount="indefinite" additive="sum" />
+        <circle cx="693" cy="257" r="24" fill="hsl(249, 90%, 40%)"></circle>
+        <circle cx="693" cy="257" r="24" style="fill:url(#2);" filter="url(#smear2)">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 693 257"
+                to="360 693 257" begin="0s" dur="2060ms" repeatCount="indefinite" additive="sum" />
+        </circle>
+        <circle cx="693" cy="257" r="26" style="fill:url(#shadow);" transform="rotate(308, 693, 257)"></circle>
+    </g>
+    <g id="planet-4">
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 500 500" to="360 500 500"
+            begin="0s" dur="39s" repeatCount="indefinite" additive="sum" />
+        <circle cx="746" cy="809" r="23" fill="hsl(159, 90%, 40%)"></circle>
+        <circle cx="746" cy="809" r="23" style="fill:url(#3);" filter="url(#smear3)">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 746 809"
+                to="360 746 809" begin="0s" dur="1995ms" repeatCount="indefinite" additive="sum" />
+        </circle>
+        <circle cx="746" cy="809" r="25" style="fill:url(#shadow);" transform="rotate(51, 746, 809)"></circle>
+    </g>
+    <g id="planet-5">
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 500 500" to="360 500 500"
+            begin="0s" dur="47s" repeatCount="indefinite" additive="sum" />
+        <circle cx="393" cy="965" r="19" fill="hsl(80, 90%, 40%)"></circle>
+        <circle cx="393" cy="965" r="19" style="fill:url(#4);" filter="url(#smear4)">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 393 965"
+                to="360 393 965" begin="0s" dur="1735ms" repeatCount="indefinite" additive="sum" />
+        </circle>
+        <circle cx="393" cy="965" r="21" style="fill:url(#shadow);" transform="rotate(102, 393, 965)"></circle>
+    </g><text x="20" y="980" style="font-family: Courier New; fill: #ffffff; font-size: 32px;" text-anchor="start">Iota
+        Raum Span-af1f30</text>
+    <script>//<![CDATA[
+        window.addEventListener('load', function () {
+            document.getElementById('planet-1').addEventListener('mouseenter', function(e) {e.currentTarget.getElementByTagName('animateTransform').setAttribute('type',null)});
+            document.getElementById('planet-1').addEventListener('mouseleave', function(e) {e.currentTarget.getElementByTagName('animateTransform').setAttribute('type','rotate')});
+        })
+        //]]>
+    </script>
+</svg>
