@@ -38,6 +38,7 @@
     "bl": "^5.0.0",
     "bnc-notify": "^1.5.0",
     "dotenv": "^8.2.0",
+    "eth-crypto": "^2.4.0",
     "eth-hooks": "2.3.19",
     "ethers": "^5.4.1",
     "fortmatic": "^2.2.1",
