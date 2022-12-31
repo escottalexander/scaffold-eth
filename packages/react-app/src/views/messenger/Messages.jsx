@@ -11,7 +11,6 @@ const { Content } = Layout;
  * @returns react component
  **/
 function Messages({ receivedMessages, sentMessages, address, contactAddress }) {
-  console.log(receivedMessages, sentMessages);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {

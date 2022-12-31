@@ -71,7 +71,6 @@ const ContactManager = ({
     }
     // get all user contacts from state
     const menuItems = [getItem("Add Contact", "", <PlusCircleOutlined />, false)];
-    console.log("usercontact address", userContacts[address]);
     if (userContacts[address]) {
       for (let contact of userContacts[address]) {
         const key = `contact/${contact}`;
@@ -91,7 +90,6 @@ const ContactManager = ({
 
       // generate new keys with eth-crypto and store them locally
       const identity = EthCrypto.createIdentity(Buffer.from(signedMessage, "utf8"));
-      console.log(identity);
       // store identity as attached to current address
       setCredentials(
         Object.assign({}, credentials, {
@@ -123,7 +121,6 @@ const ContactManager = ({
 
     // generate new keys with eth-crypto and store them locally
     const identity = EthCrypto.createIdentity(Buffer.from(signedMessage, "utf8"));
-    console.log(identity);
     // store identity as attached to current address
     setCredentials(
       Object.assign({}, credentials, {

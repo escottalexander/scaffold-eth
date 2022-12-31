@@ -67,25 +67,21 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
     setReceivedMessages(Object.assign({}, receivedMessages, formatted));
   }, [userMessages]);
 
-  const checkIfRecipientRegistered = async () => {
+  const checkAddressRegistered = async () => {
     const recipient = contactAddress;
     const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(recipient);
     const recipientRegistered = recipientPubKey != "";
-    console.log(recipientRegistered);
     setEncrypted(recipientRegistered);
-    form.setFieldsValue({ encrypted: recipientRegistered });
   };
 
   useEffect(() => {
-    checkIfRecipientRegistered();
+    checkAddressRegistered();
   }, [contactAddress]);
 
   const sendMessage = async () => {
-    console.log("encrypted: ", encrypted);
     let preparedMessage = message;
     if (encrypted) {
       // get public key of recipient
-      console.log("contactAddress: ", contactAddress);
       const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(contactAddress);
       if (recipientPubKey == "") {
         // show user that reciepient is not registered. Advise them to send unencrypted message telling recipient to register.
@@ -101,7 +97,6 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
         recipientPubKey, // publicKey
         message, // message
       );
-      console.log(recipientPubKey, preparedMessage);
     }
     const result = tx(
       writeContracts.EthereumInstantMessenger.sendMessage(
