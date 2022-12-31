@@ -1,16 +1,10 @@
 import { Button, Col, Menu, Row } from "antd";
 
 import "antd/dist/antd.css";
-import {
-  useBalance,
-  useContractLoader,
-  useContractReader,
-  useGasPrice,
-  useUserProviderAndSigner,
-} from "eth-hooks";
+import { useBalance, useContractLoader, useContractReader, useGasPrice, useUserProviderAndSigner } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, Route, Switch, useLocation } from "react-router-dom";
+// import { Link, Route, Switch, useLocation } from "react-router-dom";
 import "./App.css";
 import {
   Account,
@@ -31,6 +25,7 @@ import deployedContracts from "./contracts/hardhat_contracts.json";
 import { getRPCPollTime, Transactor, Web3ModalSetup } from "./helpers";
 import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
+import { ContactManager } from "./views/messenger";
 
 const { ethers } = require("ethers");
 /*
@@ -58,7 +53,7 @@ const initialNetwork = NETWORKS.localhost; // <------- select your target fronte
 // 😬 Sorry for all the console logging
 const DEBUG = false;
 const NETWORKCHECK = true;
-const USE_BURNER_WALLET = false; // toggle burner wallet feature
+const USE_BURNER_WALLET = true; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
 
 const web3Modal = Web3ModalSetup();
@@ -78,7 +73,7 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
+  // const location = useLocation();
 
   const targetNetwork = NETWORKS[selectedNetwork];
 
@@ -170,9 +165,6 @@ function App(props) {
     mainnetProviderPollingTime,
   );
 
-  // keep track of a variable from the contract in the local React state:
-  //const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
@@ -233,8 +225,15 @@ function App(props) {
       console.log(code, reason);
       logoutOfWeb3Modal();
     });
+
     // eslint-disable-next-line
   }, [setInjectedProvider]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     window.location.reload();
+  //   }, 1);
+  // },[injectedProvider]);
 
   useEffect(() => {
     if (web3Modal.cachedProvider) {
@@ -293,33 +292,24 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
-      <Menu style={{ textAlign: "center", marginTop: 20 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-      </Menu>
 
-      <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          { userSigner ?<Home tx={tx} userSigner={userSigner} provider={localProvider} mainnetProvider={mainnetProvider} readContracts={readContracts} writeContracts={writeContracts} /> : ""}
-          
-        </Route>
-        <Route exact path="/debug">
-          <Contract
-            name="YourContract"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-          />
-        </Route>
-      </Switch>
+      {userSigner && readContracts["EthereumInstantMessenger"] ? (
+        <ContactManager
+          address={address}
+          tx={tx}
+          userSigner={userSigner}
+          provider={localProvider}
+          mainnetProvider={mainnetProvider}
+          readContracts={readContracts}
+          writeContracts={writeContracts}
+          price={price}
+          signer={userSigner}
+          blockExplorer={blockExplorer}
+          contractConfig={contractConfig}
+        />
+      ) : (
+        ""
+      )}
 
       <ThemeSwitch />
 

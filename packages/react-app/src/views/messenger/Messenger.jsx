@@ -1,0 +1,207 @@
+import { Button, Col, Menu, Row, Switch, Form, Input, Checkbox, notification, Layout, Tooltip, Space } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { useLocalStorage } from "../../hooks";
+import { useContractReader } from "eth-hooks";
+import { Address, AddressInput, Events } from "../../components";
+import { Messages } from "./";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import EthCrypto from "eth-crypto";
+
+const { TextArea } = Input;
+const { Content, Sider, Header } = Layout;
+
+/**
+ * web3 props can be passed from '../App.jsx' into your local view component for use
+ * @param {*} yourLocalBalance balance on current network
+ * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
+ * @returns react component
+ **/
+function Messenger({
+  address,
+  tx,
+  userSigner,
+  provider,
+  mainnetProvider,
+  readContracts,
+  writeContracts,
+  credentials,
+  userMessages,
+}) {
+  const [form] = Form.useForm();
+  const { contactAddress } = useParams();
+  const [message, setMessage] = useState("");
+  const [encrypted, setEncrypted] = useState(false);
+
+  const handleMessageChange = event => {
+    // 👇️ access textarea value
+    setMessage(event.target.value);
+  };
+
+  const [sentMessages, setSentMessages] = useLocalStorage("sentMessages", { [contactAddress]: [] });
+  const [receivedMessages, setReceivedMessages] = useLocalStorage("receivedMessages", { [contactAddress]: [] });
+
+  useEffect(() => {
+    if (!sentMessages[contactAddress]) {
+      setSentMessages(Object.assign({}, sentMessages, { [contactAddress]: [] }));
+    }
+    if (!receivedMessages[contactAddress]) {
+      setReceivedMessages(Object.assign({}, sentMessages, { [contactAddress]: [] }));
+    }
+  }, [contactAddress]);
+
+  useEffect(async () => {
+    let formatted = { [contactAddress]: [] };
+    for (let m of userMessages) {
+      const block = await provider.getBlock(m.blockNumber);
+      const rMessage = {
+        message: m.message,
+        to: m.to,
+        from: m.from,
+        blockNumber: m.blockNumber,
+        timestamp: block.timestamp,
+      };
+      try {
+        const message = await EthCrypto.decryptWithPrivateKey(
+          credentials.privKey, // privateKey
+          JSON.parse(m.message),
+        );
+        rMessage.message = message;
+      } catch (e) {}
+      if (formatted[rMessage.from]) {
+        formatted[rMessage.from].push(rMessage);
+      } else {
+        Object.assign({}, formatted, { [rMessage.from]: [rMessage] });
+      }
+    }
+
+    setReceivedMessages(Object.assign({}, receivedMessages, formatted));
+  }, [userMessages]);
+
+  const checkIfRecipientRegistered = async () => {
+    const recipient = contactAddress;
+    const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(recipient);
+    const recipientRegistered = recipientPubKey != "";
+    console.log(recipientRegistered);
+    setEncrypted(recipientRegistered);
+    form.setFieldsValue({ encrypted: recipientRegistered });
+  };
+
+  useEffect(() => {
+    checkIfRecipientRegistered();
+  }, [contactAddress]);
+
+  const sendMessage = async () => {
+    console.log("encrypted: ", encrypted);
+    let preparedMessage = message;
+    if (encrypted) {
+      // get public key of recipient
+      console.log("contactAddress: ", contactAddress);
+      const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(contactAddress);
+      if (recipientPubKey == "") {
+        // show user that reciepient is not registered. Advise them to send unencrypted message telling recipient to register.
+        notification.error({
+          message: "Recipient Is Not Registered",
+          description: "Send them an unencrypted message telling them to register!",
+          placement: "bottomRight",
+        });
+        return;
+      }
+      // encrypt with recipients public key
+      preparedMessage = await EthCrypto.encryptWithPublicKey(
+        recipientPubKey, // publicKey
+        message, // message
+      );
+      console.log(recipientPubKey, preparedMessage);
+    }
+    const result = tx(
+      writeContracts.EthereumInstantMessenger.sendMessage(
+        contactAddress,
+        encrypted ? JSON.stringify(preparedMessage) : preparedMessage,
+        encrypted,
+      ),
+      async update => {
+        console.log("📡 Transaction Update:", update);
+        if (update && (update.status === "confirmed" || update.status === 1)) {
+          console.log(" 🍾 Transaction " + update.hash + " finished!");
+          console.log(
+            " ⛽️ " +
+              update.gasUsed +
+              "/" +
+              (update.gasLimit || update.gas) +
+              " @ " +
+              parseFloat(update.gasPrice) / 1000000000 +
+              " gwei",
+          );
+
+          const block = await provider.getBlock();
+
+          setSentMessages(
+            Object.assign({}, sentMessages, {
+              [contactAddress]: sentMessages[contactAddress].concat({
+                from: address,
+                to: contactAddress,
+                blockNumber: block.number,
+                timestamp: block.timestamp,
+                message,
+              }),
+            }),
+          );
+          setMessage("");
+        }
+      },
+    );
+    console.log("awaiting metamask/web3 confirm result...", result);
+    console.log(await result);
+  };
+
+  return (
+    <Layout style={{ margin: 10 }}>
+      <Content
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "nowrap",
+          justifyContent: "flex-end",
+          alignItems: "flex-start",
+        }}
+      >
+        <div style={{ flex: "1" }} />
+
+        <Address address={contactAddress} fontSize={16} />
+        <div
+          style={{ flex: "1", display: "flex", flexDirection: "row", flexWrap: "nowrap", justifyContent: "flex-end" }}
+        >
+          <p style={{ paddingRight: 5 }}>Encryption: </p>
+          <Switch disabled={true} checked={encrypted} checkedChildren="ON" unCheckedChildren="OFF" />
+          <Tooltip
+            placement="topRight"
+            title={`Address ${encrypted ? "is" : "has not"} registered to receive encrypted messages.`}
+          >
+            <InfoCircleOutlined style={{ marginLeft: 5 }} />
+          </Tooltip>
+        </div>
+      </Content>
+      <Content>
+        {receivedMessages[contactAddress] ? (
+          <Messages
+            sentMessages={sentMessages}
+            receivedMessages={receivedMessages}
+            address={address}
+            contactAddress={contactAddress}
+          />
+        ) : (
+          ""
+        )}
+      </Content>
+      <Content>
+        <Space direction="horizontal">
+          <TextArea rows={3} id="message" name="message" value={message} onChange={handleMessageChange} />
+          <Button onClick={sendMessage}>Send</Button>
+        </Space>
+      </Content>
+    </Layout>
+  );
+}
+
+export default Messenger;
