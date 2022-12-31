@@ -1,12 +1,9 @@
-import { Button, Col, Menu, Row, Switch, Form, Input, Checkbox, notification } from "antd";
-import { useContractReader } from "eth-hooks";
+import { Button, Switch, Form, Input, notification } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
-import { AddressInput, Events } from "../components";
+import { AddressInput } from "../components";
 import { ContactManager } from "./messenger";
-import { ethers } from "ethers";
 import { useLocalStorage } from "../hooks";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import EthCrypto from "eth-crypto";
 
 const { TextArea } = Input;

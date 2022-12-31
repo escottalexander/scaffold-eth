@@ -1,16 +1,8 @@
-import { Button, Col, Menu, Row, Switch, Form, Input, Checkbox, notification, Layout, Tooltip, Empty } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
-import { useContractReader } from "eth-hooks";
-import { useEventListener } from "eth-hooks/events/useEventListener";
-import { AddressInput, Events } from "../../components";
-import { ethers } from "ethers";
+import { Layout, Empty } from "antd";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import EthCrypto from "eth-crypto";
 import { MessageBubble } from "./";
 
-const { TextArea } = Input;
-const { Content, Sider, Header } = Layout;
+const { Content } = Layout;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use

@@ -1,15 +1,14 @@
-import { Button, Col, Menu, Row, Switch, Form, Input, Checkbox, notification, Layout, Tooltip, Space } from "antd";
+import { Button, Switch, Form, Input, notification, Layout, Tooltip, Space } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useLocalStorage } from "../../hooks";
-import { useContractReader } from "eth-hooks";
-import { Address, AddressInput, Events } from "../../components";
+import { Address } from "../../components";
 import { Messages } from "./";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import EthCrypto from "eth-crypto";
 
 const { TextArea } = Input;
-const { Content, Sider, Header } = Layout;
+const { Content } = Layout;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -17,17 +16,7 @@ const { Content, Sider, Header } = Layout;
  * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
  * @returns react component
  **/
-function Messenger({
-  address,
-  tx,
-  userSigner,
-  provider,
-  mainnetProvider,
-  readContracts,
-  writeContracts,
-  credentials,
-  userMessages,
-}) {
+function Messenger({ address, tx, provider, readContracts, writeContracts, credentials, userMessages }) {
   const [form] = Form.useForm();
   const { contactAddress } = useParams();
   const [message, setMessage] = useState("");
