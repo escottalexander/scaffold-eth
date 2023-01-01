@@ -17,7 +17,6 @@ const { Content } = Layout;
  * @returns react component
  **/
 function Messenger({ address, tx, provider, readContracts, writeContracts, credentials, userMessages }) {
-  const [form] = Form.useForm();
   const { contactAddress } = useParams();
   const [message, setMessage] = useState("");
   const [encrypted, setEncrypted] = useState(false);
@@ -39,7 +38,7 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
     }
   }, [contactAddress]);
 
-  useEffect(async () => {
+  const processRecievedMessages = async () => {
     let formatted = { [contactAddress]: [] };
     for (let m of userMessages) {
       const block = await provider.getBlock(m.blockNumber);
@@ -65,12 +64,15 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
     }
 
     setReceivedMessages(Object.assign({}, receivedMessages, formatted));
+  };
+  useEffect(() => {
+    processRecievedMessages();
   }, [userMessages]);
 
   const checkAddressRegistered = async () => {
     const recipient = contactAddress;
     const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(recipient);
-    const recipientRegistered = recipientPubKey != "";
+    const recipientRegistered = recipientPubKey !== "";
     setEncrypted(recipientRegistered);
   };
 
@@ -166,7 +168,7 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
           </Tooltip>
         </div>
       </Content>
-      <Content>
+      <Content style={{ maxHeight: 600, marginBottom: 10 }}>
         {receivedMessages[contactAddress] ? (
           <Messages
             sentMessages={sentMessages}

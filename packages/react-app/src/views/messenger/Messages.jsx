@@ -1,6 +1,6 @@
-import { Layout, Empty } from "antd";
+import "./Messages.css";
+import { Layout, Empty, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { MessageBubble } from "./";
 
 const { Content } = Layout;
 
@@ -19,22 +19,24 @@ function Messages({ receivedMessages, sentMessages, address, contactAddress }) {
     });
     setMessages(combined);
   }, [receivedMessages[contactAddress], sentMessages[contactAddress]]);
-  // TODO format messages to look totally rad
   return (
-    <Layout style={{ minHeight: 600, maxHeight: 600 }}>
-      <Content>
-        {messages.length == 0 ? (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        ) : (
-          messages.map(m => (
-            <MessageBubble
-              key={`${contactAddress}-${m.blockNumber}`}
-              message={m}
-              address={address}
-              contactAddress={contactAddress}
-            />
-          ))
-        )}
+    <Layout style={{ maxHeight: 600 }}>
+      <Content style={{ minHeight: 600, overflow: "auto", display: "flex", flexDirection: "column-reverse" }}>
+        <div className="imessage">
+          {messages.length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          ) : (
+            messages.map(m => (
+              <Tooltip
+                title={`Message was sent at ${new Date(m.timestamp * 1000).toLocaleTimeString()} on ${new Date(
+                  m.timestamp * 1000,
+                ).toLocaleDateString()}.`}
+              >
+                <p className={m.from === address ? "from-me" : "from-them"}>{m.message}</p>
+              </Tooltip>
+            ))
+          )}
+        </div>
       </Content>
     </Layout>
   );

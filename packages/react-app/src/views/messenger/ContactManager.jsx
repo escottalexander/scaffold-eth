@@ -46,19 +46,19 @@ const ContactManager = ({
   const [userMessages, setUserMessages] = useLocalStorage("userMessageEvents", { [address]: [] });
 
   // TODO only get events for our addresses, this may take awhile if we are loading every event EVER. At least choke it down to the last 1000 blocks or something.
-  const messageEvents = useEventListener(readContracts, "EthereumInstantMessenger", "MessageSent", provider);
+  const messageEvents = useEventListener(readContracts, "EthereumInstantMessenger", "MessageSent", provider, 0);
   console.log("📟 Transfer events:", messageEvents);
 
   useEffect(() => {
     // get all contacts
     const myMessages = messageEvents
-      .filter(m => m.args.to == address)
+      .filter(m => m.args.to === address)
       .map(e => {
         return { to: e.args.to, from: e.args.from, blockNumber: e.blockNumber, message: e.args.message };
       });
     setUserMessages(Object.assign({}, userMessages, { [address]: myMessages }));
     for (let event of myMessages) {
-      if (!userContacts[address][event.from] && event.from != address) {
+      if (!userContacts[address][event.from] && event.from !== address) {
         setUserContacts(Object.assign({}, userContacts, { [address]: userContacts[address].concat(event.from) }));
       }
     }
@@ -82,7 +82,7 @@ const ContactManager = ({
     setContactMenuItems(menuItems);
   }, [userContacts[address]]);
 
-  useEffect(async () => {
+  const onAddressChange = async () => {
     // Get users registration state
     if (!credentials[address] || credentials[address].pubKey == "") {
       // sign message and use signed message as entropy for credentials
@@ -111,6 +111,10 @@ const ContactManager = ({
 
     // change back to default view
     history.push("/");
+  };
+
+  useEffect(() => {
+    onAddressChange();
   }, [address]);
 
   const registerUser = async () => {
