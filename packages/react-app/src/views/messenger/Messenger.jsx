@@ -34,8 +34,9 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
       setSentMessages(Object.assign({}, sentMessages, { [contactAddress]: [] }));
     }
     if (!receivedMessages[contactAddress]) {
-      setReceivedMessages(Object.assign({}, sentMessages, { [contactAddress]: [] }));
+      setReceivedMessages(Object.assign({}, receivedMessages, { [contactAddress]: [] }));
     }
+    checkAddressRegistered();
   }, [contactAddress]);
 
   const processRecievedMessages = async () => {
@@ -65,6 +66,7 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
 
     setReceivedMessages(Object.assign({}, receivedMessages, formatted));
   };
+
   useEffect(() => {
     processRecievedMessages();
   }, [userMessages]);
@@ -74,18 +76,23 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
     const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(recipient);
     const recipientRegistered = recipientPubKey !== "";
     setEncrypted(recipientRegistered);
+    return recipientRegistered;
   };
 
   useEffect(() => {
     checkAddressRegistered();
-  }, [contactAddress]);
+  }, [receivedMessages]);
 
   const sendMessage = async () => {
     let preparedMessage = message;
-    if (encrypted) {
+    let recipientEncrypted = encrypted;
+    if (!recipientEncrypted) {
+      recipientEncrypted = await checkAddressRegistered();
+    }
+    if (recipientEncrypted) {
       // get public key of recipient
       const recipientPubKey = await readContracts["EthereumInstantMessenger"].getUserPubKey(contactAddress);
-      if (recipientPubKey == "") {
+      if (recipientPubKey === "") {
         // show user that reciepient is not registered. Advise them to send unencrypted message telling recipient to register.
         notification.error({
           message: "Recipient Is Not Registered",
@@ -103,8 +110,8 @@ function Messenger({ address, tx, provider, readContracts, writeContracts, crede
     const result = tx(
       writeContracts.EthereumInstantMessenger.sendMessage(
         contactAddress,
-        encrypted ? JSON.stringify(preparedMessage) : preparedMessage,
-        encrypted,
+        recipientEncrypted ? JSON.stringify(preparedMessage) : preparedMessage,
+        recipientEncrypted,
       ),
       async update => {
         console.log("📡 Transaction Update:", update);

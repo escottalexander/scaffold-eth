@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { useLocalStorage } from "../../hooks";
+import { useLocalStorage, useEventListener } from "../../hooks";
 import { Link, Route, Switch, useLocation, useHistory } from "react-router-dom";
 import Blockies from "react-blockies";
 import { ethers } from "ethers";
 import { Contract, AddressInput } from "../../components";
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { useEventListener } from "eth-hooks/events/useEventListener";
+import { PlusCircleOutlined, BugOutlined } from "@ant-design/icons";
 import { Button, Menu, Layout, Alert, Space } from "antd";
 import { Messenger } from ".";
 import EthCrypto from "eth-crypto";
@@ -33,6 +32,7 @@ const ContactManager = ({
   price,
   blockExplorer,
   contractConfig,
+  DEBUG,
 }) => {
   const [contactMenuItems, setContactMenuItems] = useState([getItem("Add Contact", "", <PlusCircleOutlined />, false)]);
   const { currentTheme } = useThemeSwitcher();
@@ -45,8 +45,7 @@ const ContactManager = ({
   const [userContacts, setUserContacts] = useLocalStorage(`userContacts`, { [address]: [] });
   const [userMessages, setUserMessages] = useLocalStorage("userMessageEvents", { [address]: [] });
 
-  // TODO only get events for our addresses, this may take awhile if we are loading every event EVER. At least choke it down to the last 1000 blocks or something.
-  const messageEvents = useEventListener(readContracts, "EthereumInstantMessenger", "MessageSent", provider, 0);
+  const messageEvents = useEventListener(readContracts, "EthereumInstantMessenger", "MessageSent", provider);
   console.log("📟 Transfer events:", messageEvents);
 
   useEffect(() => {
@@ -79,8 +78,11 @@ const ContactManager = ({
         }
       }
     }
+    if (DEBUG) {
+      menuItems.push(getItem("Debug Contract", "debug", <BugOutlined />));
+    }
     setContactMenuItems(menuItems);
-  }, [userContacts[address]]);
+  }, [userContacts[address], address]);
 
   const onAddressChange = async () => {
     // Get users registration state
@@ -241,6 +243,7 @@ const ContactManager = ({
                   justifyContent: "flex-start",
                 }}
               >
+                <h1>Add a Contact</h1>
                 <Space direction="horizontal">
                   <AddressInput
                     placeholder="New Contact Address"
@@ -286,7 +289,67 @@ const ContactManager = ({
             </Route>
           </Switch>
         </Content>
-        <Sider theme={currentTheme} width={200}></Sider>
+        <Sider theme={currentTheme} width={"40%"}>
+          <Content style={{ maxHeight: "790px", overflow: "auto", margin: 20 }}>
+            <h1 style={{ fontSize: 20, padding: 20 }}>Ethereum Instant Messenger</h1>
+            <p>
+              A prototype to demonstrate the use of public key cryptography for the sending and receiving of messages.
+              Through the use of ephemeral keys, we can encrypt and decrypt messages without using/exposing a users
+              private key. Their ephemeral set of keys is derived from their signature so it can be replicated on any
+              device.
+            </p>
+            <p>
+              By default, this app uses burner wallets so signing occurs without any prompt to the user. If you wish to
+              use a web3 wallet then you can do that as well. When you first change accounts you will be asked to sign a
+              message. This message is then used as entropy for generating a new private and public key pair. Because we
+              are using an ephemeral set of keys for the encryption you must "register" with the smart contract after
+              generating your new keys. This way any user can look up your web3 address and find your associated public
+              key. Now other users are able to encrypt messages using your public key that only you can read (with your
+              private key).
+            </p>
+            <p>
+              To test the app, open two windows, with at least one being a private browsing window so they don't share
+              local storage. You can then add the address of the opposite window to your list of contacts and send
+              messages back and forth. The content of these messages are completely visible on chain. Now click the
+              "Register" button on each window. Each session should now recognize that the contact has registered with
+              the smart contract and any messages will be encrypted and not able to be read on chain without the private
+              key.
+            </p>
+            <p>
+              Real world use cases for a messaging app built on top of Ethereum is very small considering the cost of
+              block space and the lack of need for message permanence in most cases.
+            </p>
+            <p>Here are some ideas to improve:</p>
+            <ul style={{ textAlign: "left" }}>
+              <li>Build on top of Lens Protocol</li>
+              <li>Integrate with IPFS or Arweave so that the only thing sent on-chain is the hash of the content</li>
+              <li>Implement Lit Protocol</li>
+              <li>
+                Only use ECDSA with public key cryptography to send a shared secret and use AES (symmetric key
+                cryptography) for the content encryption
+              </li>
+              <li>
+                Perhaps we could reliable store messages off-chain and only use the chain for secret sharing and sharing
+                the location of messages
+              </li>
+              <li>
+                Look for the potential to use a users existing keys instead of generating ephemeral ones. The
+                functionality for this is currently being deprecated in Metamask
+              </li>
+              <li>Securely store ephemeral keys. Currently using Local Storage which is not a good idea</li>
+            </ul>
+            <p>
+              Built with <a href="https://github.com/scaffold-eth/scaffold-eth">Scaffold-Eth</a>, a forkable Ethereum
+              development stack focused on fast product iterations.
+            </p>
+
+            <p>
+              Scaffold-Eth is built and maintained by the <a href="https://buidlguidl.com/">Buidl Guidl</a>, a curated
+              group of Ethereum builders creating products, prototypes, and tutorials to enrich the web3 ecosystem with
+              a special focus on on-boarding developers to the Ethereum ecosystem.
+            </p>
+          </Content>
+        </Sider>
       </Layout>
     </Layout>
   );

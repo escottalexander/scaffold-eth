@@ -1,28 +1,63 @@
-# 🏗 Scaffold-ETH
+# 💬 Ethereum Instant Messenger
 
-> everything you need to build on Ethereum! 🚀
-
-🧪 Quickly experiment with Solidity using a frontend that adapts to your smart contract:
-
-![image](https://user-images.githubusercontent.com/2653167/124158108-c14ca380-da56-11eb-967e-69cde37ca8eb.png)
+> Send encrypted messages to any address - Built with Scaffold-Eth
 
 
+A prototype to demonstrate the use of public key cryptography for the sending and receiving of messages.
+Through the use of ephemeral keys, we can encrypt and decrypt messages without using/exposing a users
+private key. Their ephemeral set of keys is derived from their signature so it can be replicated on any
+device.
+              
+By default, this app uses burner wallets so signing occurs without any prompt to the user. If you wish to
+use a web3 wallet then you can do that as well. When you first change accounts you will be asked to sign a
+message. This message is then used as entropy for generating a new private and public key pair. Because we
+are using an ephemeral set of keys for the encryption you must "register" with the smart contract after
+generating your new keys. This way any user can look up your web3 address and find your associated public
+key. Now other users are able to encrypt messages using your public key that only you can read (with your
+private key).
+            
+To test the app, open two windows, with at least one being a private browsing window so they don't share
+local storage. You can then add the address of the opposite window to your list of contacts and send
+messages back and forth. The content of these messages are completely visible on chain. Now click the
+"Register" button on each window. Each session should now recognize that the contact has registered with
+the smart contract and any messages will be encrypted and not able to be read on chain without the private
+key.
+
+Real world use cases for a messaging app built on top of Ethereum is very small considering the cost of
+block space and the lack of need for message permanence in most cases.
+
+Here are some ideas to improve:  
+- Build on top of Lens Protocol
+- Integrate with IPFS or Arweave so that the only thing sent on-chain is the hash of the content
+- Implement Lit Protocol
+- Only use ECDSA with public key cryptography to send a shared secret and use AES (symmetric key cryptography) for the content encryption
+- Perhaps we could reliable store messages off-chain and only use the chain for secret sharing and sharing the location of messages
+- Look for the potential to use a users existing keys instead of generating ephemeral ones. The functionality for this is currently being deprecated in Metamask
+- Securely store ephemeral keys. Currently using Local Storage which is not a good idea
+
+Built with [Scaffold-Eth](https://github.com/scaffold-eth/scaffold-eth), a forkable Ethereum
+development stack focused on fast product iterations.
+
+Scaffold-Eth is built and maintained by the [Buidl Guidl](https://buidlguidl.com/), a curated
+group of Ethereum builders creating products, prototypes, and tutorials to enrich the web3 ecosystem with
+a special focus on on-boarding developers to the Ethereum ecosystem.
+  
 # 🏄‍♂️ Quick Start
 
 Prerequisites: [Node (v18 LTS)](https://nodejs.org/en/download/) plus [Yarn (v1.x)](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
 🚨 If you are using a version < v18 you will need to remove `openssl-legacy-provider` from the `start` script in `package.json`
 
-> clone/fork 🏗 scaffold-eth:
+> clone/fork 🏗 ethereum-instant-messenger:
 
 ```bash
-git clone https://github.com/scaffold-eth/scaffold-eth.git
+git clone https://github.com/escottalexander/ethereum-instant-messenger.git
 ```
 
 > install and start your 👷‍ Hardhat chain:
 
 ```bash
-cd scaffold-eth
+cd ethereum-instant-messenger
 yarn install
 yarn chain
 ```
@@ -30,14 +65,14 @@ yarn chain
 > in a second terminal window, start your 📱 frontend:
 
 ```bash
-cd scaffold-eth
+cd ethereum-instant-messenger
 yarn start
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```bash
-cd scaffold-eth
+cd ethereum-instant-messenger
 yarn deploy
 ```
 

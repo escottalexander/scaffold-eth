@@ -28,6 +28,7 @@ function Messages({ receivedMessages, sentMessages, address, contactAddress }) {
           ) : (
             messages.map(m => (
               <Tooltip
+                key={`${m.from}-${m.blockNumber}`}
                 title={`Message was sent at ${new Date(m.timestamp * 1000).toLocaleTimeString()} on ${new Date(
                   m.timestamp * 1000,
                 ).toLocaleDateString()}.`}

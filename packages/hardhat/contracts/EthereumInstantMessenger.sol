@@ -4,7 +4,7 @@ pragma solidity >=0.8.0 <0.9.0;
 contract EthereumInstantMessenger {
     event MessageSent(
         address indexed to,
-        address from,
+        address indexed from,
         string message,
         uint256 blockNumber,
         bool encrypted

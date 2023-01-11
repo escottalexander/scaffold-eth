@@ -48,7 +48,7 @@ const { ethers } = require("ethers");
 const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, goerli, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = false;
+const DEBUG = true;
 const NETWORKCHECK = true;
 const USE_BURNER_WALLET = true; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
@@ -226,12 +226,6 @@ function App(props) {
     // eslint-disable-next-line
   }, [setInjectedProvider]);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     window.location.reload();
-  //   }, 1);
-  // },[injectedProvider]);
-
   useEffect(() => {
     if (web3Modal.cachedProvider) {
       loadWeb3Modal();
@@ -303,6 +297,7 @@ function App(props) {
           signer={userSigner}
           blockExplorer={blockExplorer}
           contractConfig={contractConfig}
+          DEBUG={DEBUG}
         />
       ) : (
         ""
