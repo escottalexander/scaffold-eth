@@ -1,4 +1,4 @@
-import { LinkOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 import "./fonts/Air Balloon - TTF.ttf";
 import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
@@ -119,6 +119,9 @@ const web3Modal = new Web3Modal({
     },
   },
 });
+
+const screenWidth = window.innerWidth;
+const screenHeight = screenWidth * (48 / 28); // background ratio
 
 function App(props) {
   // confetti setup
@@ -245,18 +248,25 @@ function App(props) {
   const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
   console.log("📟 Transfer events:", transferEvents);
 
+  const scrollToBottom = instant => {
+    window.scrollTo({
+      top: 10000,
+      behavior: instant ? "auto" : "smooth",
+    });
+  };
+
   // Scroll and confetti!
   const balloonScrollWithConfetti = () => {
     // scroll to bottom of page
-    window.scrollTo({
-      top: 10000,
-      behavior: "smooth",
-    });
+    scrollToBottom();
     // show confetti
-    setTimeout(() => {
-      showConfetti();
-    }, 500);
+    showConfetti();
   };
+
+  // Scroll to bottom of page on load
+  useEffect(() => {
+    scrollToBottom(true);
+  }, []);
   //
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
@@ -502,12 +512,25 @@ function App(props) {
 
         <Switch>
           <Route exact path="/">
+            <div style={{ fontFamily: "AirBalloon", fontSize: 20 }}>
+              <Button
+                // style={{ marginTop: 20 }}
+                type="primary"
+                onClick={() => {
+                  scrollToBottom();
+                }}
+              >
+                <DownOutlined />
+                Scroll To Bottom
+                <DownOutlined />
+              </Button>
+            </div>
             <div
               style={{
-                zIndex: "999999999999999999",
+                zIndex: 999,
                 position: "absolute",
                 left: "30%",
-                top: "300px",
+                top: screenHeight - 700,
                 display: "flex",
                 flexDirection: "column",
                 flexWrap: "nowrap",
@@ -518,7 +541,7 @@ function App(props) {
                 width: "40%",
                 padding: "20px",
                 fontFamily: "AirBalloon",
-                fontSize: 14,
+                fontSize: 20,
               }}
             >
               <h2 style={{ fontSize: 30, fontWeight: 800, color: "#d7686e" }}>
