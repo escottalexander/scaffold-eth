@@ -4,13 +4,12 @@
 import React, { useState } from "react";
 import "./Balloons.css";
 // import { balloons } from "./balloonsStubData.json";
-export default function Balloons({ balloons }) {
+export default function Balloons({ balloons, effect }) {
   console.log(balloons);
   const screenWidth = window.innerWidth;
   const screenHeight = screenWidth * (48 / 28); // background ratio
   console.log(screenWidth, screenHeight);
   const dispersedBalloons = balloons.map(balloon => {
-    
     // const endDate = startDate + 1000; // ((604800000 / 7) / 4); // launchDate + 6 hours (remove / 28 to make one week)
     // const difference = endDate - startDate;
 
@@ -40,16 +39,21 @@ export default function Balloons({ balloons }) {
       const currentDate = new Date().getTime();
       const launchDate = Number(balloon.launchDate);
       console.log(currentDate, launchDate, currentDate - launchDate);
-      console.log("has launched?", !(currentDate - launchDate < 25000))
+      console.log("has launched?", !(currentDate - launchDate < 25000));
       return !(currentDate - launchDate < 25000);
-    } 
+    };
     return (
       <img
         key={balloon.name}
         src={balloon.image}
-        className={"balloon" + (hasLaunched() ? " wobble-" + wobbleEffectNum : "") }
+        onLoad={effect}
+        className={"balloon" + (hasLaunched() ? " wobble-" + wobbleEffectNum : "")}
         width="100"
-        style={{ position: "absolute", left: ( hasLaunched() ? (balloonX - 50) + "px" : ((screenWidth / 2) - 50) + "px"), top: ( hasLaunched() ? balloonY + "px" : (screenHeight - 400) + "px") }}
+        style={{
+          position: "absolute",
+          left: hasLaunched() ? balloonX - 50 + "px" : screenWidth / 2 - 50 + "px",
+          top: hasLaunched() ? balloonY + "px" : screenHeight - 400 + "px",
+        }}
       />
     );
   });

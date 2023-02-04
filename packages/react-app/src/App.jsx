@@ -12,7 +12,9 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import StackGrid from "react-stack-grid";
 import Web3Modal from "web3modal";
 import "./App.css";
-//import assets from "./assets.js";
+// import assets from "./assets.js";
+import { BlockPicker } from "react-color";
+import ReactCanvasConfetti from "react-canvas-confetti";
 import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
 import { Balloons } from "./views";
 import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS } from "./constants";
@@ -28,8 +30,6 @@ import {
   useOnBlock,
   useUserProvider,
 } from "./hooks";
-import { BlockPicker } from "react-color";
-import ReactCanvasConfetti from "react-canvas-confetti";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -38,7 +38,7 @@ const ipfsAPI = require("ipfs-http-client");
 
 const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 
-//console.log("📦 Assets: ", assets);
+// console.log("📦 Assets: ", assets);
 
 /*
     Welcome to 🏗 scaffold-eth !
@@ -87,7 +87,9 @@ if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
 //
 // attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
 // Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
-const scaffoldEthProvider = new StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544");
+const scaffoldEthProvider = new StaticJsonRpcProvider(
+  "https://mainnet.infura.io/v3/" + INFURA_ID /* "https://rpc.scaffoldeth.io:48544" */,
+);
 const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID);
 // ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_I
 
@@ -176,7 +178,7 @@ function App(props) {
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
-    if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
+    if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect === "function") {
       await injectedProvider.provider.disconnect();
     }
     setTimeout(() => {
@@ -232,7 +234,7 @@ function App(props) {
   /*
   const myMainnetDAIBalance = useContractReader({ DAI: mainnetDAIContract }, "DAI", "balanceOf", [
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-  ]);*/
+  ]); */
 
   // keep track of a variable from the contract in the local React state:
   const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
@@ -242,6 +244,18 @@ function App(props) {
   const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
   console.log("📟 Transfer events:", transferEvents);
 
+  // Scroll and confetti!
+  const balloonScrollWithConfetti = () => {
+    // scroll to bottom of page
+    window.scrollTo({
+      top: 10000,
+      behavior: "smooth",
+    });
+    // show confetti
+    setTimeout(() => {
+      showConfetti();
+    }, 500);
+  };
   //
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
@@ -271,15 +285,6 @@ function App(props) {
           const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, userBalance - 1);
           console.log("💰 minted token:", tokenId);
           setUserMintedTokenId(tokenId);
-          // scroll to bottom of page
-          window.scrollTo({
-            top: 10000,
-            behavior: "smooth",
-          });
-          // show confetti
-          setTimeout(() => {
-            showConfetti();
-          }, 500);
         }, 1500);
       }
     });
@@ -289,7 +294,7 @@ function App(props) {
     const updateYourCollectibles = async () => {
       if (userMintedTokenId) {
         try {
-          let tokenId = userMintedTokenId.toNumber();
+          const tokenId = userMintedTokenId.toNumber();
           console.log("💰 tokenId:", tokenId);
           const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
           const jsonManifestString = atob(tokenURI.substring(29));
@@ -441,7 +446,7 @@ function App(props) {
   const [transferToAddresses, setTransferToAddresses] = useState({});
 
   const [loadedAssets, setLoadedAssets] = useState();
-  /*useEffect(() => {
+  /* useEffect(() => {
     const updateYourCollectibles = async () => {
       const assetUpdate = [];
       for (const a in assets) {
@@ -460,7 +465,7 @@ function App(props) {
       setLoadedAssets(assetUpdate);
     };
     if (readContracts && readContracts.YourCollectible) updateYourCollectibles();
-  }, [assets, readContracts, transferEvents]);*/
+  }, [assets, readContracts, transferEvents]); */
 
   const galleryList = [];
 
@@ -496,16 +501,10 @@ function App(props) {
 
         <Switch>
           <Route exact path="/">
-            {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
-
             <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               {isSigner ? (
                 <Button
-                  type={"primary"}
+                  type="primary"
                   onClick={() => {
                     mintItem();
                   }}
@@ -513,7 +512,7 @@ function App(props) {
                   MINT
                 </Button>
               ) : (
-                <Button type={"primary"} onClick={loadWeb3Modal}>
+                <Button type="primary" onClick={loadWeb3Modal}>
                   CONNECT WALLET
                 </Button>
               )}
@@ -586,7 +585,11 @@ function App(props) {
               </a>{" "}
               and build a cool SVG NFT!
             </div>
-            {yourCollectibles && yourCollectibles.length > 0 ? <Balloons balloons={yourCollectibles}></Balloons> : ""}
+            {yourCollectibles && yourCollectibles.length > 0 ? (
+              <Balloons effect={balloonScrollWithConfetti} balloons={yourCollectibles} />
+            ) : (
+              ""
+            )}
           </Route>
           <Route path="/debug">
             <div style={{ padding: 32 }}>
