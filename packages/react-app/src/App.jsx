@@ -476,7 +476,7 @@ function App(props) {
       {networkDisplay}
 
       <BrowserRouter>
-        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
+        {/* <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
             <Link
               onClick={() => {
@@ -497,23 +497,41 @@ function App(props) {
               Smart Contract
             </Link>
           </Menu.Item>
-        </Menu>
+        </Menu> */}
 
         <Switch>
           <Route exact path="/">
-            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+            <div
+              style={{
+                zIndex: "999999999999999999",
+                position: "absolute",
+                left: "35%",
+                top: "300px",
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "nowrap",
+                alignContent: "center",
+                alignItems: "center",
+                background: "#ffffff52",
+                borderRadius: "25px",
+                width: "30%",
+                padding: "20px",
+              }}
+            >
+              <h3>Launch a balloon in support of the BuidlGuidl</h3>
               {isSigner ? (
                 <Button
+                  style={{ marginTop: 20 }}
                   type="primary"
                   onClick={() => {
                     mintItem();
                   }}
                 >
-                  MINT
+                  Launch Balloon
                 </Button>
               ) : (
                 <Button type="primary" onClick={loadWeb3Modal}>
-                  CONNECT WALLET
+                  Connect Wallet
                 </Button>
               )}
             </div>
@@ -574,17 +592,6 @@ function App(props) {
                 }}
               />
             </div> */}
-            <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 256 }}>
-              🛠 built with{" "}
-              <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">
-                🏗 scaffold-eth
-              </a>
-              🍴{" "}
-              <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank">
-                Fork this repo
-              </a>{" "}
-              and build a cool SVG NFT!
-            </div>
             {yourCollectibles && yourCollectibles.length > 0 ? (
               <Balloons effect={balloonScrollWithConfetti} balloons={yourCollectibles} />
             ) : (
