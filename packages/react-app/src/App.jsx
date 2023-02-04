@@ -1,4 +1,5 @@
 import { LinkOutlined } from "@ant-design/icons";
+import "./fonts/Air Balloon - TTF.ttf";
 import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -516,9 +517,11 @@ function App(props) {
                 borderRadius: "25px",
                 width: "30%",
                 padding: "20px",
+                fontFamily: "AirBalloon",
+                fontSize: 14,
               }}
             >
-              <h3>Launch a balloon in support of the BuidlGuidl</h3>
+              <h2 style={{ fontSize: 30, fontWeight: 800 }}>Launch a balloon in support of the BuidlGuidl</h2>
               {isSigner ? (
                 <Button
                   style={{ marginTop: 20 }}
