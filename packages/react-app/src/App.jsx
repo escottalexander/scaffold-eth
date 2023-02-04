@@ -506,7 +506,7 @@ function App(props) {
               style={{
                 zIndex: "999999999999999999",
                 position: "absolute",
-                left: "35%",
+                left: "30%",
                 top: "300px",
                 display: "flex",
                 flexDirection: "column",
@@ -515,13 +515,15 @@ function App(props) {
                 alignItems: "center",
                 background: "#ffffff52",
                 borderRadius: "25px",
-                width: "30%",
+                width: "40%",
                 padding: "20px",
                 fontFamily: "AirBalloon",
                 fontSize: 14,
               }}
             >
-              <h2 style={{ fontSize: 30, fontWeight: 800 }}>Launch a balloon in support of the BuidlGuidl</h2>
+              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#d7686e" }}>
+                Launch a balloon in support of the BuidlGuidl
+              </h2>
               {isSigner ? (
                 <Button
                   style={{ marginTop: 20 }}
