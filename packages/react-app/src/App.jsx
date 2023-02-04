@@ -527,7 +527,7 @@ function App(props) {
             </div>
             <div
               style={{
-                zIndex: 999,
+                zIndex: 2,
                 position: "absolute",
                 left: "30%",
                 top: screenHeight - 700,
