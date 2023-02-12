@@ -260,7 +260,7 @@ function App(props) {
     // scroll to bottom of page
     scrollToBottom();
     // show confetti
-    showConfetti();
+    // showConfetti();
   };
 
   // Scroll to bottom of page on load
@@ -544,7 +544,7 @@ function App(props) {
                 fontSize: 20,
               }}
             >
-              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#d7686e" }}>
+              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#7445a1" }}>
                 Launch a balloon in support of the BuidlGuidl
               </h2>
               {isSigner ? (
