@@ -2,9 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState } from "react";
-import { Tooltip } from "antd";
 import "./Balloons.css";
-import { Address } from "../components";
 
 // import { balloons } from "./balloonsStubData.json";
 export default function Balloons({ balloons, effect }) {
