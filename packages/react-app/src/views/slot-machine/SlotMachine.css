@@ -5,6 +5,22 @@ body {
   text-align: center;
 }
 
+.slot-machine-mask {
+  width:500px;
+}
+
+.slots {
+  margin: 64px;
+  display: flex; 
+  flex-direction: row; 
+  justify-content: center;
+  /* vvv Put inside slot machine vvv */
+  position: absolute;
+  left: 0;
+  right: -80px;
+  top: 555px;
+}
+
 .container {
   margin: 20px 0;
   position: relative;

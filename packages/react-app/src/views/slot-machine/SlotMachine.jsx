@@ -1,4 +1,5 @@
 import { useContractReader } from "eth-hooks";
+import SlotMachineMask from "./slot-machine-mask.jpg";
 import { Button, Col, Menu, Row } from "antd";
 import { ethers } from "ethers";
 import React, { useCallback, useEffect, useState } from "react";
@@ -34,7 +35,7 @@ function SlotMachine({ yourLocalBalance, readContracts }) {
 
   return (
     <div>
-      <div style={{ margin: "64px", display: "flex", flexDirection: "row", justifyContent: "center" }}>
+      <div className="slots">
         <div className="container">
           <Wheel key="wheel1" selectedIndex={selectedIndex1} />
         </div>
@@ -46,6 +47,7 @@ function SlotMachine({ yourLocalBalance, readContracts }) {
         </div>
       </div>
       <Button onClick={spinSlots}>Spin!</Button>
+      <img alt="slot-machine" className="slot-machine-mask" src={SlotMachineMask} />
     </div>
   );
 }
