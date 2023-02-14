@@ -16,15 +16,15 @@ import "./SlotMachine.css";
 function Wheel({ selectedIndex, readContracts }) {
   // const [wheel, setWheel] = useState(null);
   const wheel = useRef();
-  const theta = 360 / 6; // 6 slots
+  const theta = 360 / 7; // 7 slots
   // const [cellHeight, setCellHeight] = useState(120);
-  const cellHeight = 116;
+  const cellHeight = 56;
   // const [radius, setRadius] = useState(288);
-  const radius = Math.round(cellHeight / 2 / Math.tan(Math.PI / 6));
+  const radius = Math.round(cellHeight / 2 / Math.tan(Math.PI / 7));
   // useEffect(()=>{
   //     if (wheel && wheel.current && wheel.current.offsetHeight) {
   //         // setCellHeight(wheel.current.offsetHeight);
-  //         setRadius(Math.round( ( cellHeight / 2) / Math.tan( Math.PI / 6 ) ));
+  //         setRadius(Math.round( ( cellHeight / 2) / Math.tan( Math.PI / 7 ) ));
   //     }
   // },[wheel])
 
@@ -70,10 +70,9 @@ function Wheel({ selectedIndex, readContracts }) {
   ];
 
   const updateSlots = () => {
-    const slots = [1, 2, 3, 4, 5, 6];
-    const slotCount = slots.length;
+    const slotCount = 7;
     const slotElements = [];
-    for (let i = 0; i < slots.length; i++) {
+    for (let i = 0; i < slotCount; i++) {
       if (i < slotCount) {
         const slotAngle = theta * i;
         const transform = "rotateX(" + slotAngle + "deg) translateZ(" + radius + "px)";

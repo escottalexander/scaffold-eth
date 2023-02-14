@@ -6,18 +6,20 @@ body {
 }
 
 .container {
-  border: 1px solid #CCC;
-  margin: 40px 0;
+  /* border: 1px solid #CCC; */
+  margin: 20px 0;
   position: relative;
-  width: 210px;
-  height: 140px;
+  width: 64px;
+  height: 64px;
   /* margin: 80px auto; */
-  perspective: 1000px;
+  /* perspective: 1000px; */
 }
 
 .wheel {
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; */
+  width: 64px;
+  height: 64px;
   position: absolute;
   transform: translateZ(-288px);
   transform-style: preserve-3d;
@@ -26,13 +28,13 @@ body {
 
 .slot__cell {
   position: absolute;
-  width: 190px;
-  height: 120px;
-  left: 10px;
-  top: 10px;
+  width: 64px;
+  height: 64px;
+  /* left: 10px;
+  top: 10px; */
   border: 2px solid #fff;
-  line-height: 116px;
-  font-size: 80px;
+  /* line-height: 64px;
+  font-size: 40px; */
   font-weight: bold;
   color: #000;
   text-align: center;
