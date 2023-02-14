@@ -39,6 +39,10 @@ body {
   transition: transform 1s, opacity 1s;
 }
 
+.slot__cell .icon {
+  width: 64px;
+}
+
 /* .slot__cell:nth-child(9n+1) { background: hsla(  0, 100%, 50%, 0.8); }
 .slot__cell:nth-child(9n+2) { background: hsla( 40, 100%, 50%, 0.8); }
 .slot__cell:nth-child(9n+3) { background: hsla( 80, 100%, 50%, 0.8); }

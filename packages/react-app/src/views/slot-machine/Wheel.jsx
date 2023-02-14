@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-
+import BarIcon from "./Bar.png";
+import BellIcon from "./Bell.png";
+import CherryIcon from "./Cherry.png";
+import DiamondIcon from "./Diamond.png";
+import OilBarrelIcon from "./OilBarrel.png";
+import OilWellIcon from "./OilWell.png";
+import SevenIcon from "./Seven.png";
 import "./SlotMachine.css";
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -53,6 +59,16 @@ function Wheel({ selectedIndex, readContracts }) {
 
   const [slots, setSlots] = useState([]);
 
+  const icons = [
+    { name: "BarIcon", imgSrc: BarIcon },
+    { name: "BellIcon", imgSrc: BellIcon },
+    { name: "CherryIcon", imgSrc: CherryIcon },
+    { name: "DiamondIcon", imgSrc: DiamondIcon },
+    { name: "OilBarrelIcon", imgSrc: OilBarrelIcon },
+    { name: "OilWellIcon", imgSrc: OilWellIcon },
+    { name: "SevenIcon", imgSrc: SevenIcon },
+  ];
+
   const updateSlots = () => {
     const slots = [1, 2, 3, 4, 5, 6];
     const slotCount = slots.length;
@@ -67,7 +83,7 @@ function Wheel({ selectedIndex, readContracts }) {
         };
         slotElements.push(
           <div className="slot__cell" style={style}>
-            {slots[i]}
+            <img className="icon" alt={icons[i].name} src={icons[i].imgSrc} />
           </div>,
         );
       } else {
