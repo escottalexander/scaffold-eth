@@ -68,31 +68,31 @@ const DEBUG = true;
 
 // helper function to "Get" from IPFS
 // you usually go content.toString() after this...
-const getFromIPFS = async hashToGet => {
-  for await (const file of ipfs.get(hashToGet)) {
-    console.log(file.path);
-    if (!file.content) continue;
-    const content = new BufferList();
-    for await (const chunk of file.content) {
-      content.append(chunk);
-    }
-    console.log(content);
-    return content;
-  }
-};
+// const getFromIPFS = async hashToGet => {
+//   for await (const file of ipfs.get(hashToGet)) {
+//     console.log(file.path);
+//     if (!file.content) continue;
+//     const content = new BufferList();
+//     for await (const chunk of file.content) {
+//       content.append(chunk);
+//     }
+//     console.log(content);
+//     return content;
+//   }
+// };
 
 // 🛰 providers
-if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
+// if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
 // const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
 // const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
 //
 // attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
 // Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
-const scaffoldEthProvider = new StaticJsonRpcProvider(
-  "https://mainnet.infura.io/v3/" + INFURA_ID /* "https://rpc.scaffoldeth.io:48544" */,
-);
-const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID);
-// ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_I
+// const scaffoldEthProvider = new StaticJsonRpcProvider(
+//   "https://mainnet.infura.io/v3/" + INFURA_ID /* "https://rpc.scaffoldeth.io:48544" */,
+// );
+// const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID);
+// // ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_I
 
 // 🏠 Your local provider is usually pointed at your local blockchain
 const localProviderUrl = targetNetwork.rpcUrl;
@@ -120,65 +120,83 @@ const web3Modal = new Web3Modal({
   },
 });
 
-const screenWidth = window.innerWidth;
-const screenHeight = screenWidth * (48 / 28); // background ratio
+// const screenWidth = window.innerWidth;
+// const screenHeight = screenWidth * (48 / 28); // background ratio
 
 function App(props) {
+  const [isFullView, setIsFullView] = useState(false);
+  useEffect(() => {
+    setIsFullView(window.location.pathname === "/full-view");
+  }, []);
+
+  const [isLoadingBalloons, setIsLoadingBalloons] = useState(true);
+  const [existingBalloons, setExistingBalloons] = useState([]);
+  useEffect(() => {
+    if (!isFullView) return;
+    async function fetchData() {
+      const response = await fetch("http://localhost:32889/allitems");
+      const tokensMetadata = await response.json();
+      setExistingBalloons(tokensMetadata);
+      setIsLoadingBalloons(false);
+    }
+    fetchData();
+  }, [isFullView]);
   // confetti setup
-  const canvasStyles = {
-    position: "fixed",
-    pointerEvents: "none",
-    width: "100%",
-    height: "100%",
-    top: 0,
-    left: 0,
-    zIndex: -1,
-  };
-  const refAnimationInstance = useRef(null);
+  // const canvasStyles = {
+  //   position: "fixed",
+  //   pointerEvents: "none",
+  //   width: "100%",
+  //   height: "100%",
+  //   top: 0,
+  //   left: 0,
+  //   zIndex: -1,
+  // };
+  // const refAnimationInstance = useRef(null);
 
-  const getInstance = useCallback(instance => {
-    refAnimationInstance.current = instance;
-  }, []);
+  // const getInstance = useCallback(instance => {
+  //   refAnimationInstance.current = instance;
+  // }, []);
 
-  const makeShot = useCallback((particleRatio, opts) => {
-    refAnimationInstance.current &&
-      refAnimationInstance.current({
-        ...opts,
-        origin: { y: 0.8 },
-        particleCount: Math.floor(200 * particleRatio),
-      });
-  }, []);
+  // const makeShot = useCallback((particleRatio, opts) => {
+  //   refAnimationInstance.current &&
+  //     refAnimationInstance.current({
+  //       ...opts,
+  //       origin: { y: 0.8 },
+  //       particleCount: Math.floor(200 * particleRatio),
+  //     });
+  // }, []);
 
-  const showConfetti = useCallback(() => {
-    makeShot(0.25, {
-      spread: 26,
-      startVelocity: 55,
-    });
+  // const showConfetti = useCallback(() => {
+  //   makeShot(0.25, {
+  //     spread: 26,
+  //     startVelocity: 55,
+  //   });
 
-    makeShot(0.2, {
-      spread: 60,
-    });
+  //   makeShot(0.2, {
+  //     spread: 60,
+  //   });
 
-    makeShot(0.35, {
-      spread: 100,
-      decay: 0.91,
-      scalar: 0.8,
-    });
+  //   makeShot(0.35, {
+  //     spread: 100,
+  //     decay: 0.91,
+  //     scalar: 0.8,
+  //   });
 
-    makeShot(0.1, {
-      spread: 120,
-      startVelocity: 25,
-      decay: 0.92,
-      scalar: 1.2,
-    });
+  //   makeShot(0.1, {
+  //     spread: 120,
+  //     startVelocity: 25,
+  //     decay: 0.92,
+  //     scalar: 1.2,
+  //   });
 
-    makeShot(0.1, {
-      spread: 120,
-      startVelocity: 45,
-    });
-  }, [makeShot]);
+  //   makeShot(0.1, {
+  //     spread: 120,
+  //     startVelocity: 45,
+  //   });
+  // }, [makeShot]);
   // end confetti setup
-  const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
+  // const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
+  const [injectedProvider, setInjectedProvider] = useState();
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -190,9 +208,8 @@ function App(props) {
     }, 1);
   };
 
-  const [injectedProvider, setInjectedProvider] = useState();
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangePrice(targetNetwork, mainnetProvider);
+  // const price = useExchangePrice(targetNetwork, mainnetProvider);
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
@@ -216,7 +233,7 @@ function App(props) {
   const yourLocalBalance = useBalance(localProvider, address);
 
   // Just plug in different 🛰 providers to get your balance on different chains:
-  const yourMainnetBalance = useBalance(mainnetProvider, address);
+  // const yourMainnetBalance = useBalance(mainnetProvider, address);
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider);
@@ -230,9 +247,9 @@ function App(props) {
   const isSigner = injectedProvider && injectedProvider.getSigner && injectedProvider.getSigner()._isSigner;
 
   // If you want to call a function on a new block
-  useOnBlock(mainnetProvider, () => {
-    console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
-  });
+  // useOnBlock(mainnetProvider, () => {
+  //   console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
+  // });
 
   // Then read your DAI balance like:
   /*
@@ -244,37 +261,48 @@ function App(props) {
   const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
   console.log("🤗 balance:", balance);
 
+  const [pageLoadBlock, setPageLoadBlock] = useState(0);
+
+  useEffect(() => {
+    const getBlockNumber = () => {
+      const blockNumber = localProvider.blockNumber + 1;
+      setPageLoadBlock(blockNumber);
+      console.log("transferEvents block: ", blockNumber);
+    };
+    if (localProvider.blockNumber > 0 && pageLoadBlock === 0) {
+      getBlockNumber();
+    }
+  }, [localProvider.blockNumber]);
   // 📟 Listen for broadcast events
-  const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
+  const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, pageLoadBlock);
   console.log("📟 Transfer events:", transferEvents);
 
-  const scrollToBottom = instant => {
-    window.scrollTo({
-      top: 10000,
-      behavior: instant ? "auto" : "smooth",
-    });
-  };
+  // const scrollToBottom = instant => {
+  //   window.scrollTo({
+  //     top: 10000,
+  //     behavior: instant ? "auto" : "smooth",
+  //   });
+  // };
 
   // Scroll and confetti!
-  const balloonScrollWithConfetti = () => {
-    // scroll to bottom of page
-    scrollToBottom();
-    // show confetti
-    // showConfetti();
-  };
+  // const balloonScrollWithConfetti = () => {
+  //   // scroll to bottom of page
+  //   scrollToBottom();
+  //   // show confetti
+  //   // showConfetti();
+  // };
 
   // Scroll to bottom of page on load
-  useEffect(() => {
-    scrollToBottom(true);
-  }, []);
+  // useEffect(() => {
+  //   scrollToBottom(true);
+  // }, []);
   //
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
-  const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
+  // const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
 
-  const [yourCollectibles, setYourCollectibles] = useState([]);
-  const [userMintedTokenId, setUserMintedTokenId] = useState();
-  const [launchTimer, setLaunchTimer] = useState(0);
+  const [newBalloons, setNewBalloons] = useState([]);
+  // const [userMintedTokenId, setUserMintedTokenId] = useState();
 
   const mintItem = async () => {
     const timeStamp = new Date().getTime();
@@ -291,29 +319,27 @@ function App(props) {
             parseFloat(update.gasPrice) / 1000000000 +
             " gwei",
         );
-        setTimeout(async () => {
-          const userBalance = await readContracts.YourCollectible.balanceOf(address);
-          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, userBalance - 1);
-          console.log("💰 minted token:", tokenId);
-          setUserMintedTokenId(tokenId);
-        }, 1500);
+        // setTimeout(async () => {
+        //   const userBalance = await readContracts.YourCollectible.balanceOf(address);
+        //   const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, userBalance - 1);
+        //   console.log("💰 minted token:", tokenId);
+        //   setUserMintedTokenId(tokenId);
+        // }, 1500);
       }
     });
   };
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
-      if (userMintedTokenId) {
+      for (const balloon of transferEvents) {
         try {
-          const tokenId = userMintedTokenId.toNumber();
+          const tokenId = balloon.tokenId.toNumber();
           console.log("💰 tokenId:", tokenId);
           const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
           const jsonManifestString = atob(tokenURI.substring(29));
           try {
             const jsonManifest = JSON.parse(jsonManifestString);
-            setYourCollectibles(
-              yourCollectibles.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }),
-            );
+            setNewBalloons(newBalloons.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }));
           } catch (e) {
             console.log(e);
           }
@@ -323,7 +349,7 @@ function App(props) {
       }
     };
     updateYourCollectibles();
-  }, [userMintedTokenId]);
+  }, [transferEvents]);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -332,28 +358,28 @@ function App(props) {
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
-  useEffect(() => {
-    if (
-      DEBUG &&
-      mainnetProvider &&
-      address &&
-      selectedChainId &&
-      yourLocalBalance &&
-      yourMainnetBalance &&
-      readContracts &&
-      writeContracts
-    ) {
-      console.log("_____________________________________ 🏗 scaffold-eth _____________________________________");
-      console.log("🌎 mainnetProvider", mainnetProvider);
-      console.log("🏠 localChainId", localChainId);
-      console.log("👩‍💼 selected address:", address);
-      console.log("🕵🏻‍♂️ selectedChainId:", selectedChainId);
-      console.log("💵 yourLocalBalance", yourLocalBalance ? formatEther(yourLocalBalance) : "...");
-      console.log("💵 yourMainnetBalance", yourMainnetBalance ? formatEther(yourMainnetBalance) : "...");
-      console.log("📝 readContracts", readContracts);
-      console.log("🔐 writeContracts", writeContracts);
-    }
-  }, [mainnetProvider, address, selectedChainId, yourLocalBalance, yourMainnetBalance, readContracts, writeContracts]);
+  // useEffect(() => {
+  //   if (
+  //     DEBUG &&
+  //     // mainnetProvider &&
+  //     address &&
+  //     selectedChainId &&
+  //     yourLocalBalance &&
+  //     // yourMainnetBalance &&
+  //     readContracts &&
+  //     writeContracts
+  //   ) {
+  //     console.log("_____________________________________ 🏗 scaffold-eth _____________________________________");
+  //     // console.log("🌎 mainnetProvider", mainnetProvider);
+  //     console.log("🏠 localChainId", localChainId);
+  //     console.log("👩‍💼 selected address:", address);
+  //     console.log("🕵🏻‍♂️ selectedChainId:", selectedChainId);
+  //     console.log("💵 yourLocalBalance", yourLocalBalance ? formatEther(yourLocalBalance) : "...");
+  //     // console.log("💵 yourMainnetBalance", yourMainnetBalance ? formatEther(yourMainnetBalance) : "...");
+  //     console.log("📝 readContracts", readContracts);
+  //     console.log("🔐 writeContracts", writeContracts);
+  //   }
+  // }, [mainnetProvider, address, selectedChainId, yourLocalBalance, yourMainnetBalance, readContracts, writeContracts]);
 
   let networkDisplay = "";
   if (localChainId && selectedChainId && localChainId !== selectedChainId) {
@@ -412,11 +438,6 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
-  const [route, setRoute] = useState();
-  useEffect(() => {
-    setRoute(window.location.pathname);
-  }, [setRoute]);
-
   let faucetHint = "";
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name === "localhost";
 
@@ -447,16 +468,16 @@ function App(props) {
     );
   }
 
-  const [sending, setSending] = useState();
-  const [ipfsHash, setIpfsHash] = useState();
-  const [ipfsDownHash, setIpfsDownHash] = useState();
+  // const [sending, setSending] = useState();
+  // const [ipfsHash, setIpfsHash] = useState();
+  // const [ipfsDownHash, setIpfsDownHash] = useState();
 
-  const [downloading, setDownloading] = useState();
-  const [ipfsContent, setIpfsContent] = useState();
+  // const [downloading, setDownloading] = useState();
+  // const [ipfsContent, setIpfsContent] = useState();
 
-  const [transferToAddresses, setTransferToAddresses] = useState({});
+  // const [transferToAddresses, setTransferToAddresses] = useState({});
 
-  const [loadedAssets, setLoadedAssets] = useState();
+  // const [loadedAssets, setLoadedAssets] = useState();
   /* useEffect(() => {
     const updateYourCollectibles = async () => {
       const assetUpdate = [];
@@ -478,59 +499,23 @@ function App(props) {
     if (readContracts && readContracts.YourCollectible) updateYourCollectibles();
   }, [assets, readContracts, transferEvents]); */
 
-  const galleryList = [];
+  // const galleryList = [];
 
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
-      <Header />
-      {networkDisplay}
+      {isFullView ? "" : <Header />}
+      {isFullView ? "" : networkDisplay}
 
       <BrowserRouter>
-        {/* <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link
-              onClick={() => {
-                setRoute("/");
-              }}
-              to="/"
-            >
-              Your Balloons
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/debug">
-            <Link
-              onClick={() => {
-                setRoute("/debug");
-              }}
-              to="/debug"
-            >
-              Smart Contract
-            </Link>
-          </Menu.Item>
-        </Menu> */}
-
         <Switch>
           <Route exact path="/">
-            <div style={{ fontFamily: "AirBalloon", fontSize: 20 }}>
-              <Button
-                // style={{ marginTop: 20 }}
-                type="primary"
-                onClick={() => {
-                  scrollToBottom();
-                }}
-              >
-                <DownOutlined />
-                Scroll To Bottom
-                <DownOutlined />
-              </Button>
-            </div>
             <div
               style={{
                 zIndex: 2,
                 position: "absolute",
-                left: "30%",
-                top: screenHeight - 700,
+                left: "10%",
+                top: "300px",
                 display: "flex",
                 flexDirection: "column",
                 flexWrap: "nowrap",
@@ -538,7 +523,7 @@ function App(props) {
                 alignItems: "center",
                 background: "#ffffff52",
                 borderRadius: "25px",
-                width: "40%",
+                width: "80%",
                 padding: "20px",
                 fontFamily: "AirBalloon",
                 fontSize: 20,
@@ -620,11 +605,105 @@ function App(props) {
                 }}
               />
             </div> */}
-            {yourCollectibles && yourCollectibles.length > 0 ? (
-              <Balloons effect={balloonScrollWithConfetti} balloons={yourCollectibles} />
-            ) : (
-              ""
-            )}
+            {/* <Balloons existingBalloons={existingBalloons} balloons={yourCollectibles} /> */}
+          </Route>
+          <Route exact path="/full-view">
+            {/* <div
+              style={{
+                zIndex: 2,
+                position: "absolute",
+                left: "30%",
+                top: screenHeight - 700,
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "nowrap",
+                alignContent: "center",
+                alignItems: "center",
+                background: "#ffffff52",
+                borderRadius: "25px",
+                width: "40%",
+                padding: "20px",
+                fontFamily: "AirBalloon",
+                fontSize: 20,
+              }}
+            >
+              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#7445a1" }}>
+                Launch a balloon in support of the BuidlGuidl
+              </h2>
+              {isSigner ? (
+                <Button
+                  style={{ marginTop: 20 }}
+                  type="primary"
+                  onClick={() => {
+                    mintItem();
+                  }}
+                >
+                  Launch Balloon
+                </Button>
+              ) : (
+                <Button type="primary" onClick={loadWeb3Modal}>
+                  Connect Wallet
+                </Button>
+              )}
+            </div> */}
+
+            {/* <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
+              <List
+                bordered
+                dataSource={yourCollectibles}
+                renderItem={item => {
+                  const id = item.id.toNumber();
+
+                  //console.log("IMAGE", item)
+
+                  return (
+                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                      <Card
+                        title={
+                          <div>
+                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
+                          </div>
+                        }
+                      >
+                        <a href={"https://opensea.io/assets/" + (readContracts && readContracts.YourCollectible && readContracts.YourCollectible.address) + "/" + item.id} target="_blank">
+                          <img src={item.image} />
+                        </a>
+                        <div>{item.description}</div>
+                      </Card>
+
+                      <div>
+                        owner:{" "}
+                        <Address
+                          address={item.owner}
+                          ensProvider={mainnetProvider}
+                          blockExplorer={blockExplorer}
+                          fontSize={16}
+                        />
+                        <AddressInput
+                          ensProvider={mainnetProvider}
+                          placeholder="transfer to address"
+                          value={transferToAddresses[id]}
+                          onChange={newValue => {
+                            const update = {};
+                            update[id] = newValue;
+                            setTransferToAddresses({ ...transferToAddresses, ...update });
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            console.log("writeContracts", writeContracts);
+                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
+                          }}
+                        >
+                          Transfer
+                        </Button>
+                      </div>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div> */}
+            <Balloons existingBalloons={existingBalloons} balloons={newBalloons} loading={isLoadingBalloons} />
           </Route>
           <Route path="/debug">
             <div style={{ padding: 32 }}>
@@ -644,65 +723,73 @@ function App(props) {
         </Switch>
       </BrowserRouter>
 
-      <ThemeSwitch />
+      {/* <ThemeSwitch /> */}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <Account
-          address={address}
-          localProvider={localProvider}
-          userProvider={userProvider}
-          mainnetProvider={mainnetProvider}
-          price={price}
-          web3Modal={web3Modal}
-          loadWeb3Modal={loadWeb3Modal}
-          logoutOfWeb3Modal={logoutOfWeb3Modal}
-          blockExplorer={blockExplorer}
-          isSigner={isSigner}
-        />
-        {faucetHint}
-      </div>
+      {isFullView ? (
+        ""
+      ) : (
+        <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+          <Account
+            address={address}
+            localProvider={localProvider}
+            userProvider={userProvider}
+            // mainnetProvider={mainnetProvider}
+            // price={price}
+            web3Modal={web3Modal}
+            loadWeb3Modal={loadWeb3Modal}
+            logoutOfWeb3Modal={logoutOfWeb3Modal}
+            blockExplorer={blockExplorer}
+            isSigner={isSigner}
+          />
+          {faucetHint}
+        </div>
+      )}
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
+      {isFullView ? (
+        ""
+      ) : (
+        <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+          <Row align="middle" gutter={[4, 4]}>
+            <Col span={8}>
+              <Ramp /* price={price} */ address={address} networks={NETWORKS} />
+            </Col>
 
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
-          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-            <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-              }}
-              size="large"
-              shape="round"
-            >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
-            </Button>
-          </Col>
-        </Row>
+            <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
+              <GasGauge gasPrice={gasPrice} />
+            </Col>
+            <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
+              <Button
+                onClick={() => {
+                  window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
+                }}
+                size="large"
+                shape="round"
+              >
+                <span style={{ marginRight: 8 }} role="img" aria-label="support">
+                  💬
+                </span>
+                Support
+              </Button>
+            </Col>
+          </Row>
 
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {
-              /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? (
-                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-              ) : (
-                ""
-              )
-            }
-          </Col>
-        </Row>
-      </div>
-      <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
+          <Row align="middle" gutter={[4, 4]}>
+            <Col span={24}>
+              {
+                /*  if the local provider has a signer, let's show the faucet:  */
+                faucetAvailable ? (
+                  <Faucet localProvider={localProvider} /* price={price} ensProvider={mainnetProvider} */ />
+                ) : (
+                  ""
+                )
+              }
+            </Col>
+          </Row>
+        </div>
+      )}
+      {/* <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} /> */}
     </div>
   );
 }
