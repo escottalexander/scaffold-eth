@@ -331,22 +331,27 @@ function App(props) {
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
-      for (const balloon of transferEvents) {
-        try {
-          const tokenId = balloon.tokenId.toNumber();
-          console.log("💰 tokenId:", tokenId);
-          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
-          const jsonManifestString = atob(tokenURI.substring(29));
+      const balloons = [...newBalloons];
+      for await (const balloon of transferEvents) {
+        const tokenId = balloon.tokenId.toNumber();
+        if (balloons.findIndex(b => b.id === tokenId) === -1) {
           try {
-            const jsonManifest = JSON.parse(jsonManifestString);
-            setNewBalloons(newBalloons.concat({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest }));
+            console.log("💰 tokenId:", tokenId);
+            const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+            const jsonManifestString = atob(tokenURI.substring(29));
+            try {
+              const jsonManifest = JSON.parse(jsonManifestString);
+              balloons.unshift({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+            } catch (e) {
+              console.log(e);
+            }
           } catch (e) {
             console.log(e);
           }
-        } catch (e) {
-          console.log(e);
         }
       }
+      console.log("setting new balloonsto ", balloons);
+      setNewBalloons(balloons);
     };
     updateYourCollectibles();
   }, [transferEvents]);

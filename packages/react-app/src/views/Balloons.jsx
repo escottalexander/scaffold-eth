@@ -7,10 +7,9 @@ import { Space, Spin } from "antd";
 
 // import { balloons } from "./balloonsStubData.json";
 export default function Balloons({ balloons, existingBalloons, loading }) {
-  console.log(balloons);
   const screenWidth = window.innerWidth;
   const screenHeight = screenWidth * (48 / 28); // background ratio
-  console.log(screenWidth, screenHeight);
+  // console.log(screenWidth, screenHeight);
   const oldBalloons = existingBalloons.map(balloon => {
     // console.log(currentDate, startDate, endDate, difference, heightRatio);
     // this is both deterministic (so that they don't hop around on reflow)
@@ -71,9 +70,9 @@ export default function Balloons({ balloons, existingBalloons, loading }) {
 
     const wobbleEffectNum = balloon.seed.slice(2)[3];
     // define the condition for the balloon to be considered "launched"
-    const hasLaunched = () => {
+    const hasLaunched = lDate => {
       const currentDate = new Date().getTime();
-      const launchDate = Number(balloon.launchDate);
+      const launchDate = Number(lDate);
       console.log(currentDate, launchDate, currentDate - launchDate);
       console.log("has launched?", !(currentDate - launchDate < 25000));
       return !(currentDate - launchDate < 25000);
@@ -89,15 +88,15 @@ export default function Balloons({ balloons, existingBalloons, loading }) {
           key={balloon.name}
           src={balloon.image}
           // onLoad={effect}
-          className={"balloon" + (hasLaunched() ? " wobble-" + wobbleEffectNum : "")}
+          className={"balloon" + (hasLaunched(balloon.launchDate) ? " wobble-" + wobbleEffectNum : "")}
           width="100"
           style={{
             position: "absolute",
-            left: hasLaunched() ? balloonX - 50 + "px" : screenWidth - balloonX - 50 + "px", // X start position is opposite from ending X position
-            top: hasLaunched() ? balloonY + "px" : screenHeight - 400 + "px",
+            left: hasLaunched(balloon.launchDate) ? balloonX - 50 + "px" : screenWidth - balloonX - 50 + "px", // X start position is opposite from ending X position
+            top: hasLaunched(balloon.launchDate) ? balloonY + "px" : screenHeight - 400 + "px",
           }}
         />
-        {hasLaunched() ? (
+        {hasLaunched(balloon.launchDate) ? (
           ""
         ) : (
           <div
