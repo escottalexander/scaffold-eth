@@ -3,6 +3,8 @@ body {
   background-image: url(/Balloon_BG_small.jpg);
   background-size: cover;
   background-repeat: no-repeat;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 code {

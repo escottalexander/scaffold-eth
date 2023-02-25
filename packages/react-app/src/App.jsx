@@ -31,6 +31,7 @@ import {
   useOnBlock,
   useUserProvider,
 } from "./hooks";
+import exampleData from "./example-data";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -124,9 +125,16 @@ const web3Modal = new Web3Modal({
 // const screenHeight = screenWidth * (48 / 28); // background ratio
 
 function App(props) {
+  const [currentTime, setCurrentTime] = useState(new Date().getTime());
+
   const [isFullView, setIsFullView] = useState(false);
   useEffect(() => {
+    // Check and set route
     setIsFullView(window.location.pathname === "/full-view");
+    // start currentTime counter
+    setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, 2000);
   }, []);
 
   const [isLoadingBalloons, setIsLoadingBalloons] = useState(true);
@@ -134,13 +142,14 @@ function App(props) {
   useEffect(() => {
     if (!isFullView) return;
     async function fetchData() {
-      const response = await fetch("http://localhost:32889/allitems");
-      const tokensMetadata = await response.json();
+      // const response = await fetch("http://localhost:32889/allitems");
+      const tokensMetadata = await new Promise((resolve) => resolve(exampleData))//await response.json();
       setExistingBalloons(tokensMetadata);
       setIsLoadingBalloons(false);
     }
     fetchData();
   }, [isFullView]);
+
   // confetti setup
   // const canvasStyles = {
   //   position: "fixed",
@@ -341,7 +350,7 @@ function App(props) {
             const jsonManifestString = atob(tokenURI.substring(29));
             try {
               const jsonManifest = JSON.parse(jsonManifestString);
-              balloons.unshift({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+              balloons.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
             } catch (e) {
               console.log(e);
             }
@@ -708,7 +717,12 @@ function App(props) {
                 }}
               />
             </div> */}
-            <Balloons existingBalloons={existingBalloons} balloons={newBalloons} loading={isLoadingBalloons} />
+            <Balloons
+              existingBalloons={existingBalloons}
+              balloons={newBalloons}
+              loading={isLoadingBalloons}
+              currentTime={currentTime}
+            />
           </Route>
           <Route path="/debug">
             <div style={{ padding: 32 }}>
