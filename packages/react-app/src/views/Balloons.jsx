@@ -29,7 +29,7 @@ export default function Balloons({ balloons, existingBalloons, loading, currentT
     const yPos = numFromHex(balloon.seed, 2);
     const variance = numFromHex(balloon.seed, 3); // Variance is used to very slightly tweak X and Y positions so that balloons are dispersed
     // Balloon X and Y positions is based on seed so that it always appears in the same place when page reloads
-    const balloonX = (screenWidth / 16) * xPos + variance * 5 - balloonSize;
+    const balloonX = (screenWidth / 17) * xPos + variance * 4 - balloonSize / 2;
     const balloonY = (screenHeight / 35) * yPos + variance * 10;
 
     return (
@@ -60,7 +60,7 @@ export default function Balloons({ balloons, existingBalloons, loading, currentT
     const yPos = numFromHex(balloon.seed, 2);
     const variance = numFromHex(balloon.seed, 3); // Variance is used to very slightly tweak X and Y positions so that balloons are dispersed
     // Balloon X and Y positions is based on seed so that it always appears in the same place when page reloads
-    const balloonX = (screenWidth / 16) * xPos + variance * 5 - balloonSize;
+    const balloonX = (screenWidth / 17) * xPos + variance * 4 - balloonSize / 2;
     const balloonY = (screenHeight / 35) * yPos + variance * 10;
 
     // Create Balloon element that gets reflowed at interval

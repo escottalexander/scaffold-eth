@@ -32,6 +32,7 @@ import {
   useUserProvider,
 } from "./hooks";
 import exampleData from "./example-data";
+import MintPage from "./views/MintPage";
 
 const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
@@ -524,45 +525,7 @@ function App(props) {
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            <div
-              style={{
-                zIndex: 2,
-                position: "absolute",
-                left: "10%",
-                top: "300px",
-                display: "flex",
-                flexDirection: "column",
-                flexWrap: "nowrap",
-                alignContent: "center",
-                alignItems: "center",
-                background: "#ffffff52",
-                borderRadius: "25px",
-                width: "80%",
-                padding: "20px",
-                fontFamily: "AirBalloon",
-                fontSize: 20,
-              }}
-            >
-              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#7445a1" }}>
-                Launch a balloon in support of the BuidlGuidl
-              </h2>
-              {isSigner ? (
-                <Button
-                  style={{ marginTop: 20 }}
-                  type="primary"
-                  onClick={() => {
-                    mintItem();
-                  }}
-                >
-                  Launch Balloon
-                </Button>
-              ) : (
-                <Button type="primary" onClick={loadWeb3Modal}>
-                  Connect Wallet
-                </Button>
-              )}
-            </div>
-
+            <MintPage isSigner={isSigner} mintItem={mintItem} loadWeb3Modal={loadWeb3Modal} />
             {/* <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
               <List
                 bordered

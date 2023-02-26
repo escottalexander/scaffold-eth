@@ -3,6 +3,8 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState, useEffect } from "react";
 import "./Balloons.css";
+import { Tag } from "antd";
+import { Blockie } from "../components";
 
 // import { balloons } from "./balloonsStubData.json";
 export default function Balloon({
@@ -31,34 +33,29 @@ export default function Balloon({
   }, [currentTime]);
 
   return (
-    <>
+    <div
+      className="balloon"
+      style={{
+        width: size,
+        position: "absolute",
+        left: hasBeenLaunched() ? x - size / 2 + "px" : screenWidth - x - size / 2 + "px", // X start position is opposite from ending X position
+        top: hasBeenLaunched() ? y + "px" : screenHeight - 300 + "px",
+      }}
+    >
       <img
         key={"ballon-" + balloon.seed}
         src={balloon.image}
         // onLoad={effect}
-        className={"balloon" + (hasBeenLaunched() ? " wobble-" + wobbleEffectNum : "")}
-        width={size}
-        style={{
-          position: "absolute",
-          left: hasBeenLaunched() ? x - size / 2 + "px" : screenWidth - x - size / 2 + "px", // X start position is opposite from ending X position
-          top: hasBeenLaunched() ? y + "px" : screenHeight - 400 + "px",
-        }}
+        className={hasBeenLaunched() ? " wobble-" + wobbleEffectNum : ""}
+        width="100%"
       />
       {hasBeenLaunched() ? (
         ""
       ) : (
-        <div
-          key={"minter-" + balloon.seed}
-          style={{
-            width: size + "px",
-            position: "absolute",
-            left: screenWidth - x - size / 2 + "px",
-            top: screenHeight - 280 + "px",
-          }}
-        >
-          New Launch By {formatAddress(balloon.owner)}
+        <div className="owner-tag" key={"minter-" + balloon.seed}>
+          <Tag icon={<Blockie size={12} scale={1} address={balloon.owner} />}> {formatAddress(balloon.owner)}</Tag>
         </div>
       )}
-    </>
+    </div>
   );
 }

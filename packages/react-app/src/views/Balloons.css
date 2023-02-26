@@ -1,5 +1,12 @@
 .balloon {
     transition: top 120s linear, left 120s linear;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.balloon .owner-tag {
+    
 }
 
 @-webkit-keyframes wobble-1 {
