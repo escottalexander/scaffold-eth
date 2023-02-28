@@ -21,7 +21,7 @@ contract YourCollectible is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() public ERC721("BuidlGuidlBalloons", "BGB") {}
+    constructor() public ERC721("BuidlGuidlBalloon", "BGB") {}
 
     struct Balloon {
         bytes32 seed;
@@ -131,7 +131,6 @@ contract YourCollectible is ERC721, Ownable {
                                 balloons[id].launchDate.toString(),
                                 '", "seed":"',
                                 (uint(balloons[id].seed)).toHexString(20),
-                                '", "external_url":"https://burnyboys.com/token/',
                                 id.toString(),
                                 '", "attributes": [',
                                 _generateAttributes(id),

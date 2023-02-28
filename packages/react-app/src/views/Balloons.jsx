@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState } from "react";
 import "./Balloons.css";
+import { LoadingOutlined } from "@ant-design/icons";
 import { Space, Spin } from "antd";
 import Balloon from "./Balloon";
 
@@ -84,7 +85,11 @@ export default function Balloons({ balloons, existingBalloons, loading, currentT
           direction="vertical"
           style={{ left: screenWidth / 2 - 100, top: screenHeight / 2 - 100, position: "absolute" }}
         >
-          <Spin size="large" style={{ width: "200px" }} />
+          <Spin
+            size="large"
+            indicator={<LoadingOutlined style={{ fontSize: "128px" }} />}
+            style={{ width: "200px", marginBottom: "100%" }}
+          />
         </Space>
       ) : (
         ""

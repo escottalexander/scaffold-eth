@@ -9,6 +9,15 @@
     
 }
 
+.btn-large-mobile {
+    height: 100px;
+    padding: 20px;
+    font-size: 40px;
+    border-radius: 20px;
+    margin: 0px 0px 20px 0px;
+    background-color: #1890ff;
+}
+
 @-webkit-keyframes wobble-1 {
     0% {
         -webkit-transform: translateX(3%) rotate(-3deg);

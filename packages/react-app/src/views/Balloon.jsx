@@ -16,6 +16,8 @@ export default function Balloon({
   currentTime,
   hasLaunched = true,
   size = 70,
+  position = "absolute",
+  margin = "0",
 }) {
   const formatAddress = addr => {
     return `${addr.substr(0, 6)}...${addr.substr(-4)}`;
@@ -37,7 +39,8 @@ export default function Balloon({
       className="balloon"
       style={{
         width: size,
-        position: "absolute",
+        margin,
+        position,
         left: hasBeenLaunched() ? x - size / 2 + "px" : screenWidth - x - size / 2 + "px", // X start position is opposite from ending X position
         top: hasBeenLaunched() ? y + "px" : screenHeight - 300 + "px",
       }}
@@ -53,7 +56,13 @@ export default function Balloon({
         ""
       ) : (
         <div className="owner-tag" key={"minter-" + balloon.seed}>
-          <Tag icon={<Blockie size={12} scale={1} address={balloon.owner} />}> {formatAddress(balloon.owner)}</Tag>
+          <Tag
+            style={{ backgroundColor: "#ffffff95", color: "#000" }}
+            icon={<Blockie size={12} scale={1} address={balloon.owner} />}
+          >
+            {" "}
+            {formatAddress(balloon.owner)}
+          </Tag>
         </div>
       )}
     </div>

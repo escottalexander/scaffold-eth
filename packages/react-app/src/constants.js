@@ -373,4 +373,12 @@ export const NETWORKS = {
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://mumbai-explorer.matic.today/",
   },
+  buidlguidl: {
+    name: "buidlguidl",
+    color: "#1785ff",
+    price: 1,
+    chainId: 80216,
+    rpcUrl: `https://chain.buidlguidl.com:8545`,
+    blockExplorer: "https://etherscan.io/",
+  },
 };

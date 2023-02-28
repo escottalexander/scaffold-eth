@@ -96,6 +96,20 @@ module.exports = {
         mnemonic: mnemonic(),
       },
     },
+    mumbai: {
+      url: 'https://rpc-mumbai.maticvigil.com',
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    buidlguidl: {
+      url: `https://chain.buidlguidl.com:8545`,
+      gasPrice: 1000000000,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
   },
   solidity: {
     compilers: [

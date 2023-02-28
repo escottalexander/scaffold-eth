@@ -1,4 +1,4 @@
-import { DownOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, DownOutlined } from "@ant-design/icons";
 import "./fonts/Air Balloon - TTF.ttf";
 import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
@@ -6,6 +6,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
+import QR from "qrcode.react";
 import { utils } from "ethers";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import ReactJson from "react-json-view";
@@ -64,7 +65,7 @@ const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" }
 
 /// 📡 What chain are your contracts deployed to?
 const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
-
+const indexerUrl = "http://localhost:32889";
 // 😬 Sorry for all the console logging
 const DEBUG = true;
 
@@ -127,11 +128,12 @@ const web3Modal = new Web3Modal({
 
 function App(props) {
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
-
+  const [mintUrl, setMintUrl] = useState("");
   const [isFullView, setIsFullView] = useState(false);
   useEffect(() => {
     // Check and set route
     setIsFullView(window.location.pathname === "/full-view");
+    setMintUrl(window.location.origin);
     // start currentTime counter
     setInterval(() => {
       setCurrentTime(new Date().getTime());
@@ -143,9 +145,23 @@ function App(props) {
   useEffect(() => {
     if (!isFullView) return;
     async function fetchData() {
-      // const response = await fetch("http://localhost:32889/allitems");
-      const tokensMetadata = await new Promise((resolve) => resolve(exampleData))//await response.json();
-      setExistingBalloons(tokensMetadata);
+      const balloons = [];
+      let fullPageReturned = false;
+      let page = 1;
+      const perPage = 100;
+      while (!fullPageReturned) {
+        try {
+          const response = await fetch(`${indexerUrl}/all?page=${page}&perPage=${perPage}`);
+          const tokensMetadata = await response.json();
+          fullPageReturned = tokensMetadata.length !== perPage;
+          page++;
+          balloons.push(...tokensMetadata);
+        } catch (e) {
+          fullPageReturned = true;
+          console.error(e);
+        }
+      }
+      setExistingBalloons(balloons);
       setIsLoadingBalloons(false);
     }
     fetchData();
@@ -267,9 +283,9 @@ function App(props) {
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]); */
 
-  // keep track of a variable from the contract in the local React state:
-  const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
-  console.log("🤗 balance:", balance);
+  // // keep track of a variable from the contract in the local React state:
+  // const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
+  // // console.log("🤗 balance:", balance);
 
   const [pageLoadBlock, setPageLoadBlock] = useState(0);
 
@@ -285,7 +301,7 @@ function App(props) {
   }, [localProvider.blockNumber]);
   // 📟 Listen for broadcast events
   const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, pageLoadBlock);
-  console.log("📟 Transfer events:", transferEvents);
+  // console.log("📟 Transfer events:", transferEvents);
 
   // const scrollToBottom = instant => {
   //   window.scrollTo({
@@ -310,13 +326,15 @@ function App(props) {
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
   // const total = useContractReader(readContracts, "YourCollectible", "totalSupply");
-
+  const [mintingBalloon, setMintingBalloon] = useState(false);
+  const [myMintedBalloons, setMyMintedBalloons] = useState([]);
   const [newBalloons, setNewBalloons] = useState([]);
   // const [userMintedTokenId, setUserMintedTokenId] = useState();
 
   const mintItem = async () => {
+    setMintingBalloon(true);
     const timeStamp = new Date().getTime();
-    await tx(writeContracts.YourCollectible.mintItem(timeStamp), update => {
+    await tx(writeContracts.YourCollectible.mintItem(timeStamp), async update => {
       console.log("📡 Transaction Update:", update);
       if (update && (update.status === "confirmed" || update.status === 1)) {
         console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -329,12 +347,11 @@ function App(props) {
             parseFloat(update.gasPrice) / 1000000000 +
             " gwei",
         );
-        // setTimeout(async () => {
-        //   const userBalance = await readContracts.YourCollectible.balanceOf(address);
-        //   const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, userBalance - 1);
-        //   console.log("💰 minted token:", tokenId);
-        //   setUserMintedTokenId(tokenId);
-        // }, 1500);
+        setTimeout(() => {
+          setMintingBalloon(false);
+        }, 4000);
+      } else {
+        setMintingBalloon(false);
       }
     });
   };
@@ -351,7 +368,7 @@ function App(props) {
             const jsonManifestString = atob(tokenURI.substring(29));
             try {
               const jsonManifest = JSON.parse(jsonManifestString);
-              balloons.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+              balloons.push({ id: tokenId, uri: tokenURI, ...jsonManifest });
             } catch (e) {
               console.log(e);
             }
@@ -360,8 +377,9 @@ function App(props) {
           }
         }
       }
-      console.log("setting new balloonsto ", balloons);
       setNewBalloons(balloons);
+      const myBalloons = balloons.filter(b => b.owner.toLowerCase() === address.toLowerCase());
+      setMyMintedBalloons(myBalloons);
     };
     updateYourCollectibles();
   }, [transferEvents]);
@@ -402,7 +420,7 @@ function App(props) {
     const networkLocal = NETWORK(localChainId);
     if (selectedChainId === 1337 && localChainId === 31337) {
       networkDisplay = (
-        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+        <div style={{ zoom: "130%", zIndex: 4, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
             message="⚠️ Wrong Network ID"
             description={
@@ -419,7 +437,7 @@ function App(props) {
       );
     } else {
       networkDisplay = (
-        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+        <div style={{ zoom: "130%", zIndex: 4, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
             message="⚠️ Wrong Network"
             description={
@@ -436,7 +454,17 @@ function App(props) {
     }
   } else {
     networkDisplay = (
-      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
+      <div
+        style={{
+          zoom: "130%",
+          zIndex: -1,
+          position: "absolute",
+          right: 154,
+          top: 28,
+          padding: 16,
+          color: targetNetwork.color,
+        }}
+      >
         {targetNetwork.name}
       </div>
     );
@@ -483,39 +511,6 @@ function App(props) {
     );
   }
 
-  // const [sending, setSending] = useState();
-  // const [ipfsHash, setIpfsHash] = useState();
-  // const [ipfsDownHash, setIpfsDownHash] = useState();
-
-  // const [downloading, setDownloading] = useState();
-  // const [ipfsContent, setIpfsContent] = useState();
-
-  // const [transferToAddresses, setTransferToAddresses] = useState({});
-
-  // const [loadedAssets, setLoadedAssets] = useState();
-  /* useEffect(() => {
-    const updateYourCollectibles = async () => {
-      const assetUpdate = [];
-      for (const a in assets) {
-        try {
-          const forSale = await readContracts.YourCollectible.forSale(utils.id(a));
-          let owner;
-          if (!forSale) {
-            const tokenId = await readContracts.YourCollectible.uriToTokenId(utils.id(a));
-            owner = await readContracts.YourCollectible.ownerOf(tokenId);
-          }
-          assetUpdate.push({ id: a, ...assets[a], forSale, owner });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      setLoadedAssets(assetUpdate);
-    };
-    if (readContracts && readContracts.YourCollectible) updateYourCollectibles();
-  }, [assets, readContracts, transferEvents]); */
-
-  // const galleryList = [];
-
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -525,166 +520,44 @@ function App(props) {
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            <MintPage isSigner={isSigner} mintItem={mintItem} loadWeb3Modal={loadWeb3Modal} />
-            {/* <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
-              <List
-                bordered
-                dataSource={yourCollectibles}
-                renderItem={item => {
-                  const id = item.id.toNumber();
-
-                  //console.log("IMAGE", item)
-
-                  return (
-                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
-                      <Card
-                        title={
-                          <div>
-                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
-                          </div>
-                        }
-                      >
-                        <a href={"https://opensea.io/assets/" + (readContracts && readContracts.YourCollectible && readContracts.YourCollectible.address) + "/" + item.id} target="_blank">
-                          <img src={item.image} />
-                        </a>
-                        <div>{item.description}</div>
-                      </Card>
-
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                      </div>
-                    </List.Item>
-                  );
-                }}
-              />
-            </div> */}
-            {/* <Balloons existingBalloons={existingBalloons} balloons={yourCollectibles} /> */}
+            <MintPage
+              isSigner={isSigner}
+              mintItem={mintItem}
+              loadWeb3Modal={loadWeb3Modal}
+              address={address}
+              myMintedBalloons={myMintedBalloons}
+              mintingBalloon={mintingBalloon}
+              indexerUrl={indexerUrl}
+            />
           </Route>
           <Route exact path="/full-view">
-            {/* <div
-              style={{
-                zIndex: 2,
-                position: "absolute",
-                left: "30%",
-                top: screenHeight - 700,
-                display: "flex",
-                flexDirection: "column",
-                flexWrap: "nowrap",
-                alignContent: "center",
-                alignItems: "center",
-                background: "#ffffff52",
-                borderRadius: "25px",
-                width: "40%",
-                padding: "20px",
-                fontFamily: "AirBalloon",
-                fontSize: 20,
-              }}
-            >
-              <h2 style={{ fontSize: 30, fontWeight: 800, color: "#7445a1" }}>
-                Launch a balloon in support of the BuidlGuidl
-              </h2>
-              {isSigner ? (
-                <Button
-                  style={{ marginTop: 20 }}
-                  type="primary"
-                  onClick={() => {
-                    mintItem();
-                  }}
-                >
-                  Launch Balloon
-                </Button>
-              ) : (
-                <Button type="primary" onClick={loadWeb3Modal}>
-                  Connect Wallet
-                </Button>
-              )}
-            </div> */}
-
-            {/* <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
-              <List
-                bordered
-                dataSource={yourCollectibles}
-                renderItem={item => {
-                  const id = item.id.toNumber();
-
-                  //console.log("IMAGE", item)
-
-                  return (
-                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
-                      <Card
-                        title={
-                          <div>
-                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
-                          </div>
-                        }
-                      >
-                        <a href={"https://opensea.io/assets/" + (readContracts && readContracts.YourCollectible && readContracts.YourCollectible.address) + "/" + item.id} target="_blank">
-                          <img src={item.image} />
-                        </a>
-                        <div>{item.description}</div>
-                      </Card>
-
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                      </div>
-                    </List.Item>
-                  );
-                }}
-              />
-            </div> */}
             <Balloons
               existingBalloons={existingBalloons}
               balloons={newBalloons}
               loading={isLoadingBalloons}
               currentTime={currentTime}
+            />
+            <h1
+              style={{
+                fontFamily: "AirBalloon",
+                fontSize: "42px",
+                color: "#6d15de",
+                margin: "0 50px 40px",
+                position: "absolute",
+                right: 150,
+                bottom: 0,
+              }}
+            >
+              Scan the QR code to launch a balloon! {">"}
+            </h1>
+            <QR
+              style={{ position: "absolute", right: 0, bottom: 0 }}
+              value={mintUrl}
+              size="150"
+              level="H"
+              includeMargin
+              renderAs="svg"
+              imageSettings={{ excavate: false }}
             />
           </Route>
           <Route path="/debug">
@@ -711,7 +584,7 @@ function App(props) {
       {isFullView ? (
         ""
       ) : (
-        <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+        <div style={{ zoom: "130%", position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
           <Account
             address={address}
             localProvider={localProvider}
@@ -732,7 +605,7 @@ function App(props) {
       {isFullView ? (
         ""
       ) : (
-        <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+        <div style={{ zIndex: 999, position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
           <Row align="middle" gutter={[4, 4]}>
             <Col span={8}>
               <Ramp /* price={price} */ address={address} networks={NETWORKS} />
