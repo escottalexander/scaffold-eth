@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Balloons.css";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Carousel, Space, Spin } from "antd";
+import { Carousel, Space, Spin, Tag } from "antd";
 import Balloon from "./Balloon";
 
 export default function MintPage({
@@ -87,85 +87,102 @@ export default function MintPage({
     setSelectedBalloon(allMyBalloons[toSlide]);
   };
 
+  const balloonColorElements = attributes => {
+    const output = [];
+    for (const attr of attributes) {
+      output.push(
+        <Tag style={{ margin: 10 }} color={attr.value}>
+          <h1 style={{ margin: 10, textShadow: "none", fontSize: 40 }}>{attr.value.toUpperCase()}</h1>
+        </Tag>,
+      );
+    }
+    return output;
+  };
+  console.log(selectedBalloon);
   return (
     <>
-      <div
-        style={{
-          zIndex: 2,
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "nowrap",
-          justifyContent: "center",
-          alignContent: "center",
-          alignItems: "center",
-          borderRadius: "25px",
-          width: "100%",
-          height: "100%",
-          fontFamily: "AirBalloon",
-          fontSize: 20,
-        }}
-      >
-        {allMyBalloons && allMyBalloons.length > 0 ? (
-          <h2 style={{ marginTop: 50 }}>Mint a balloon to launch it on the big screen</h2>
-        ) : (
-          <h2>
-            AUSTIN, WRITE SOMETHING HERE. Contrary to popular belief, Lorem Ipsum is not simply random text. It has
-            roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard
-            McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-            words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical
-            literature, discovered the undoubtable source.
-          </h2>
-        )}
-        {isSigner ? (
-          <button
-            className="btn-large-mobile"
-            onClick={() => {
-              setMintPressed(true);
-              mintItem();
-            }}
-          >
-            Mint Balloon
-          </button>
-        ) : (
-          <button className="btn-large-mobile" onClick={loadWeb3Modal}>
-            Connect Wallet
-          </button>
-        )}
-        {allMyBalloons && allMyBalloons.length > 0 ? (
-          <>
-            <h1 style={{ marginBottom: 0 }}>My Balloons</h1>
-            <div style={{ display: "block", background: "#ffffff30", width: "100%", height: "auto" }}>
-              <>
-                <h1 style={{ fontSize: 30, margin: 0 }}>
-                  {allMyBalloons && allMyBalloons.length > 1 ? "< < <  Swipe  > > >" : " "}
-                </h1>
-                <Carousel ref={carousel} afterChange={afterChange} beforeChange={onChange} dots dotPosition="bottom">
-                  {showMyBalloons()}
-                </Carousel>
-              </>
-            </div>
-            {selectedBalloon ? (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  textShadow: "2px 2px 7px #000" /* , flex: "1 1 auto", background: "#00000040" */,
-                }}
-              >
-                <h1 style={{ fontSize: 36 }}>{selectedBalloon.name}</h1>
-                <h1 style={{ fontSize: 36 }}>
-                  Launched On: {new Date(Number(selectedBalloon.launchDate)).toDateString()}
-                </h1>
-                <h1 style={{ fontSize: 36 }}>{selectedBalloon.description}</h1>
+      {!isLoadingBalloons ? (
+        <div
+          style={{
+            zIndex: 2,
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "nowrap",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            borderRadius: "25px",
+            width: "100%",
+            height: "100%",
+            fontFamily: "AirBalloon",
+            fontSize: 20,
+          }}
+        >
+          {allMyBalloons && allMyBalloons.length > 0 ? (
+            <h2 style={{ marginTop: 50 }}>Mint a balloon to launch it on the big screen</h2>
+          ) : (
+            <h2>
+              AUSTIN, WRITE SOMETHING HERE. Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+              roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard
+              McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
+              Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical
+              literature, discovered the undoubtable source.
+            </h2>
+          )}
+          {isSigner ? (
+            <button
+              className="btn-large-mobile"
+              onClick={() => {
+                setMintPressed(true);
+                mintItem();
+              }}
+            >
+              Mint Balloon
+            </button>
+          ) : (
+            <button className="btn-large-mobile" onClick={loadWeb3Modal}>
+              Connect Wallet
+            </button>
+          )}
+          {allMyBalloons && allMyBalloons.length > 0 ? (
+            <>
+              <h1 style={{ marginBottom: 0 }}>My Balloons</h1>
+              <div style={{ display: "block", background: "#ffffff30", width: "100%", height: "auto" }}>
+                <>
+                  <h1 style={{ fontSize: 30, margin: 0 }}>
+                    {allMyBalloons && allMyBalloons.length > 1 ? "< < <  Swipe  > > >" : " "}
+                  </h1>
+                  <Carousel ref={carousel} afterChange={afterChange} beforeChange={onChange} dots dotPosition="bottom">
+                    {showMyBalloons()}
+                  </Carousel>
+                </>
               </div>
-            ) : (
-              ""
-            )}
-          </>
-        ) : (
-          ""
-        )}
-      </div>
+              {selectedBalloon ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    textShadow: "2px 2px 7px #000",
+                  }}
+                >
+                  <h1 style={{ fontSize: 36 }}>{selectedBalloon.name}</h1>
+                  <h1 style={{ fontSize: 36 }}>
+                    Launched On: {new Date(Number(selectedBalloon.launchDate)).toDateString()}
+                  </h1>
+                  <h1 style={{ fontSize: 36 }}>Your balloon has the following colors:</h1>
+                  <div>{balloonColorElements(selectedBalloon.attributes)}</div>
+                </div>
+              ) : (
+                ""
+              )}
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      ) : (
+        ""
+      )}
       {isLoadingBalloons || mintingBalloon ? (
         <div
           style={{
