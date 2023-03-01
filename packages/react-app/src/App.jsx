@@ -93,11 +93,11 @@ const USE_NETWORK_SELECTOR = true;
 //
 // attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
 // Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
-// const scaffoldEthProvider = new StaticJsonRpcProvider(
-//   "https://mainnet.infura.io/v3/" + INFURA_ID /* "https://rpc.scaffoldeth.io:48544" */,
-// );
-// const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID);
-// // ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_I
+const scaffoldEthProvider = new StaticJsonRpcProvider(
+  "https://mainnet.infura.io/v3/" + INFURA_ID /* "https://rpc.scaffoldeth.io:48544" */,
+);
+const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID);
+// ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_I
 
 // 🏠 Your local provider is usually pointed at your local blockchain
 const localProviderUrl = targetNetwork.rpcUrl;
@@ -223,7 +223,7 @@ function App(props) {
   //   });
   // }, [makeShot]);
   // end confetti setup
-  // const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
+  const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
   const [injectedProvider, setInjectedProvider] = useState();
 
   const logoutOfWeb3Modal = async () => {
@@ -467,6 +467,7 @@ function App(props) {
               balloons={newBalloons}
               loading={isLoadingBalloons}
               currentTime={currentTime}
+              mainnetProvider={mainnetProvider}
             />
             <h1
               style={{

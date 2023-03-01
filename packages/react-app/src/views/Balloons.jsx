@@ -8,7 +8,7 @@ import { Space, Spin } from "antd";
 import Balloon from "./Balloon";
 
 // import { balloons } from "./balloonsStubData.json";
-export default function Balloons({ balloons, existingBalloons, loading, currentTime }) {
+export default function Balloons({ balloons, existingBalloons, loading, currentTime, mainnetProvider }) {
   const balloonSize = 70;
   const screenWidth = window.innerWidth;
   const screenHeight = screenWidth * (48 / 28); // background ratio
@@ -74,6 +74,7 @@ export default function Balloons({ balloons, existingBalloons, loading, currentT
         screenWidth={screenWidth}
         currentTime={currentTime}
         hasLaunched={false}
+        mainnetProvider={mainnetProvider}
       />
     );
   });

@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import "./Balloons.css";
 import { Tag } from "antd";
 import { Blockie } from "../components";
+import { useLookupAddress } from "../hooks";
+
 
 // import { balloons } from "./balloonsStubData.json";
 export default function Balloon({
@@ -18,8 +20,13 @@ export default function Balloon({
   size = 70,
   position = "absolute",
   margin = "0",
+  mainnetProvider,
 }) {
+  const ens = useLookupAddress(mainnetProvider, balloon.owner);
   const formatAddress = addr => {
+    if (ens) {
+      return `${ens.substr(0, 6)}...${ens.substr(-4)}`;
+    }
     return `${addr.substr(0, 6)}...${addr.substr(-4)}`;
   };
 
