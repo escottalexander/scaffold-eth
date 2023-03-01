@@ -17,7 +17,7 @@ import "./App.css";
 // import assets from "./assets.js";
 import { BlockPicker } from "react-color";
 import ReactCanvasConfetti from "react-canvas-confetti";
-import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
+import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch, NetworkDisplay } from "./components";
 import { Balloons } from "./views";
 import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
@@ -68,6 +68,8 @@ const targetNetwork = NETWORKS.localhost; // <------- select your target fronten
 const indexerUrl = "http://localhost:32889";
 // 😬 Sorry for all the console logging
 const DEBUG = true;
+const NETWORKCHECK = true;
+const USE_NETWORK_SELECTOR = true;
 
 // helper function to "Get" from IPFS
 // you usually go content.toString() after this...
@@ -388,88 +390,6 @@ function App(props) {
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
   */
 
-  //
-  // 🧫 DEBUG 👨🏻‍🔬
-  //
-  // useEffect(() => {
-  //   if (
-  //     DEBUG &&
-  //     // mainnetProvider &&
-  //     address &&
-  //     selectedChainId &&
-  //     yourLocalBalance &&
-  //     // yourMainnetBalance &&
-  //     readContracts &&
-  //     writeContracts
-  //   ) {
-  //     console.log("_____________________________________ 🏗 scaffold-eth _____________________________________");
-  //     // console.log("🌎 mainnetProvider", mainnetProvider);
-  //     console.log("🏠 localChainId", localChainId);
-  //     console.log("👩‍💼 selected address:", address);
-  //     console.log("🕵🏻‍♂️ selectedChainId:", selectedChainId);
-  //     console.log("💵 yourLocalBalance", yourLocalBalance ? formatEther(yourLocalBalance) : "...");
-  //     // console.log("💵 yourMainnetBalance", yourMainnetBalance ? formatEther(yourMainnetBalance) : "...");
-  //     console.log("📝 readContracts", readContracts);
-  //     console.log("🔐 writeContracts", writeContracts);
-  //   }
-  // }, [mainnetProvider, address, selectedChainId, yourLocalBalance, yourMainnetBalance, readContracts, writeContracts]);
-
-  let networkDisplay = "";
-  if (localChainId && selectedChainId && localChainId !== selectedChainId) {
-    const networkSelected = NETWORK(selectedChainId);
-    const networkLocal = NETWORK(localChainId);
-    if (selectedChainId === 1337 && localChainId === 31337) {
-      networkDisplay = (
-        <div style={{ zoom: "130%", zIndex: 4, position: "absolute", right: 0, top: 60, padding: 16 }}>
-          <Alert
-            message="⚠️ Wrong Network ID"
-            description={
-              <div>
-                You have <b>chain id 1337</b> for localhost and you need to change it to <b>31337</b> to work with
-                HardHat.
-                <div>(MetaMask -&gt; Settings -&gt; Networks -&gt; Chain ID -&gt; 31337)</div>
-              </div>
-            }
-            type="error"
-            closable={false}
-          />
-        </div>
-      );
-    } else {
-      networkDisplay = (
-        <div style={{ zoom: "130%", zIndex: 4, position: "absolute", right: 0, top: 60, padding: 16 }}>
-          <Alert
-            message="⚠️ Wrong Network"
-            description={
-              <div>
-                You have <b>{networkSelected && networkSelected.name}</b> selected and you need to be on{" "}
-                <b>{networkLocal && networkLocal.name}</b>.
-              </div>
-            }
-            type="error"
-            closable={false}
-          />
-        </div>
-      );
-    }
-  } else {
-    networkDisplay = (
-      <div
-        style={{
-          zoom: "130%",
-          zIndex: -1,
-          position: "absolute",
-          right: 154,
-          top: 28,
-          padding: 16,
-          color: targetNetwork.color,
-        }}
-      >
-        {targetNetwork.name}
-      </div>
-    );
-  }
-
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
     setInjectedProvider(new Web3Provider(provider));
@@ -494,7 +414,7 @@ function App(props) {
     formatEther(yourLocalBalance) <= 0
   ) {
     faucetHint = (
-      <div style={{ padding: 16 }}>
+      <div style={{ position: "absolute", zIndex: 5, padding: 16 }}>
         <Button
           type="primary"
           onClick={() => {
@@ -515,7 +435,18 @@ function App(props) {
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
       {isFullView ? "" : <Header />}
-      {isFullView ? "" : networkDisplay}
+      {isFullView ? (
+        ""
+      ) : (
+        <NetworkDisplay
+          NETWORKCHECK={NETWORKCHECK}
+          localChainId={localChainId}
+          selectedChainId={selectedChainId}
+          targetNetwork={targetNetwork}
+          logoutOfWeb3Modal={logoutOfWeb3Modal}
+          USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
+        />
+      )}
 
       <BrowserRouter>
         <Switch>
@@ -602,7 +533,7 @@ function App(props) {
       )}
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      {isFullView ? (
+      {true ? (
         ""
       ) : (
         <div style={{ zIndex: 999, position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
