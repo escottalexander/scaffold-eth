@@ -23,14 +23,19 @@ contract YourCollectible is ERC721, Ownable {
 
     constructor() public ERC721("BuidlGuidlBalloon", "BGB") {}
 
+    bytes3 internal constant bottomColor1 = 0x056b68;
+    bytes3 internal constant bottomColor2 = 0x083330;
+    bytes3 internal constant basket1 = 0x8c6239;
+    bytes3 internal constant basket2 = 0x603813;
+    bytes3 internal constant basketGlow = 0x4b2330;
+    bytes3 internal constant basketCage = 0x39b54a;
+
     struct Balloon {
         bytes32 seed;
         uint256 launchDate;
     }
 
     mapping(uint256 => Balloon) public balloons;
-
-    uint256 mintDeadline = block.timestamp + 24 hours;
 
     function mintItem(uint timeStamp) public returns (uint256) {
         _tokenIds.increment();
@@ -187,14 +192,6 @@ contract YourCollectible is ERC721, Ownable {
                 )
             );
     }
-
-    bytes3 bottomColor1 = 0x056b68;
-    bytes3 bottomColor2 = 0x083330;
-
-    bytes3 basket1 = 0x8c6239;
-    bytes3 basket2 = 0x603813;
-    bytes3 basketGlow = 0x4b2330;
-    bytes3 basketCage = 0x39b54a;
 
     // Visibility is `public` to enable it being called by other contracts for composition.
     function renderTokenById(uint256 id) public view returns (string memory) {
