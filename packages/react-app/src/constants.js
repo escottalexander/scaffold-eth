@@ -353,15 +353,19 @@ export const NETWORKS = {
     faucet: "https://xdai-faucet.top/",
     blockExplorer: "https://blockscout.com/poa/xdai/",
   },
-  matic: {
-    name: "matic",
+  polygon: {
+    name: "polygon",
     color: "#2bbdf7",
+    nativeCurrency: {
+      name: "Matic Token",
+      symbol: "MATIC",
+      decimals: 18,
+    },
     chainId: 137,
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://rpc-mainnet.maticvigil.com",
-    faucet: "https://faucet.matic.network/",
-    blockExplorer: "https://explorer-mainnet.maticvigil.com//",
+    rpcUrl: "https://polygon-rpc.com/",
+    blockExplorer: "https://polygonscan.com/",
   },
   mumbai: {
     name: "mumbai",

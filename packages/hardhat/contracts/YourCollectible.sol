@@ -37,7 +37,7 @@ contract YourCollectible is ERC721, Ownable {
 
     mapping(uint256 => Balloon) public balloons;
 
-    function mintItem(uint timeStamp) public returns (uint256) {
+    function mintItem() public returns (uint256) {
         _tokenIds.increment();
 
         uint256 id = _tokenIds.current();
@@ -52,7 +52,7 @@ contract YourCollectible is ERC721, Ownable {
             )
         );
         balloons[id].seed = predictableRandom;
-        balloons[id].launchDate = timeStamp;
+        balloons[id].launchDate = block.timestamp;
         return id;
     }
 

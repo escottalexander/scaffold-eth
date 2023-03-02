@@ -38,7 +38,7 @@ export default function Balloon({
     return launched;
   };
   useEffect(() => {
-    setLaunched(!(currentTime - balloon.launchDate < 25000));
+    setLaunched(!(currentTime - Number(balloon.launchDate) * 1000 < 25000));
   }, [currentTime]);
 
   return (

@@ -64,7 +64,7 @@ const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" }
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.polygon; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 const indexerUrl = "http://localhost:32889";
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -335,8 +335,7 @@ function App(props) {
 
   const mintItem = async () => {
     setMintingBalloon(true);
-    const timeStamp = new Date().getTime();
-    await tx(writeContracts.YourCollectible.mintItem(timeStamp), async update => {
+    await tx(writeContracts.YourCollectible.mintItem(), async update => {
       console.log("📡 Transaction Update:", update);
       if (update && (update.status === "confirmed" || update.status === 1)) {
         console.log(" 🍾 Transaction " + update.hash + " finished!");

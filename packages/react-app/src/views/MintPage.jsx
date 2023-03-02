@@ -98,7 +98,7 @@ export default function MintPage({
     }
     return output;
   };
-  console.log(selectedBalloon);
+
   return (
     <>
       {!isLoadingBalloons ? (
@@ -167,7 +167,7 @@ export default function MintPage({
                 >
                   <h1 style={{ fontSize: 36 }}>{selectedBalloon.name}</h1>
                   <h1 style={{ fontSize: 36 }}>
-                    Launched On: {new Date(Number(selectedBalloon.launchDate)).toDateString()}
+                    Launched On: {new Date(Number(selectedBalloon.launchDate) * 1000).toDateString()}
                   </h1>
                   <h1 style={{ fontSize: 36 }}>Your balloon has the following colors:</h1>
                   <div>{balloonColorElements(selectedBalloon.attributes)}</div>
@@ -190,6 +190,7 @@ export default function MintPage({
             alignItems: "center",
             justifyContent: "center",
             position: "absolute",
+            top: 0,
             width: "100%",
             height: "100%",
             backgroundColor: "#00000052",
